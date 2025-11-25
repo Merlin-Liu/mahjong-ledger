@@ -39,7 +39,10 @@ app.get("/api/count", async (req, res) => {
   console.log(1111);
   res.send({
     code: 0,
-    data: result,
+    data: {
+      testMessage: "testMessage",
+      result,
+    },
   });
 });
 
