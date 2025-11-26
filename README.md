@@ -1,10 +1,16 @@
-# wxcloudrun-express
+# 打牌记账应用后端
 
-[![GitHub license](https://img.shields.io/github/license/WeixinCloud/wxcloudrun-express)](https://github.com/WeixinCloud/wxcloudrun-express)
-![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/WeixinCloud/wxcloudrun-express/express)
-![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/WeixinCloud/wxcloudrun-express/sequelize)
+基于 Express + Sequelize + MySQL 开发的打牌记账应用后端 API。
 
-微信云托管 Node.js Express 框架模版，实现简单的计数器读写接口，使用云托管 MySQL 读写、记录计数值。
+## 功能特性
+
+- ✅ 用户管理（支持微信 OpenID）
+- ✅ 房间创建和管理（邀请码、二维码）
+- ✅ 房间成员管理（加入/离开）
+- ✅ 虚拟转账功能
+- ✅ 活动记录（进入/离开/转账）
+- ✅ 房间历史查询
+- ✅ 房主关闭房间功能
 
 ![](https://qcloudimg.tencent-cloud.cn/raw/be22992d297d1b9a1a5365e606276781.png)
 
@@ -27,87 +33,98 @@
 .
 ├── Dockerfile
 ├── README.md
+├── API.md              # API 详细文档
 ├── container.config.json
-├── db.js
-├── index.js
-├── index.html
-├── package.json
+├── db.js                # 数据库模型定义
+├── index.js             # 项目入口，实现所有 API 路由
+├── utils.js             # 工具函数
+├── index.html           # 首页代码
+├── package.json         # Node.js 项目定义文件
+├── .local.env           # 本地环境变量配置
+└── Dockerfile           # 容器配置文件
 ```
 
-- `index.js`：项目入口，实现主要的读写 API
-- `db.js`：数据库相关实现，使用 `sequelize` 作为 ORM
-- `index.html`：首页代码
-- `package.json`：Node.js 项目定义文件
-- `container.config.json`：模板部署「服务设置」初始化配置（二开请忽略）
-- `Dockerfile`：容器配置文件
+## 数据库模型
 
-## 服务 API 文档
+- **User**: 用户表（支持微信 OpenID）
+- **Room**: 房间表（包含房间码、房主、状态）
+- **RoomMember**: 房间成员表（记录加入/离开时间）
+- **Transaction**: 转账记录表（记录用户间的转账）
 
-### `GET /api/count`
+## 快速开始
 
-获取当前计数
+### 1. 安装依赖
 
-#### 请求参数
-
-无
-
-#### 响应结果
-
-- `code`：错误码
-- `data`：当前计数值
-
-##### 响应结果示例
-
-```json
-{
-  "code": 0,
-  "data": 42
-}
+```bash
+npm install
 ```
 
-#### 调用示例
+### 2. 配置数据库
 
-```
-curl https://<云托管服务域名>/api/count
-```
+编辑 `.local.env` 文件，配置数据库连接信息：
 
-### `POST /api/count`
-
-更新计数，自增或者清零
-
-#### 请求参数
-
-- `action`：`string` 类型，枚举值
-  - 等于 `"inc"` 时，表示计数加一
-  - 等于 `"clear"` 时，表示计数重置（清零）
-
-##### 请求参数示例
-
-```
-{
-  "action": "inc"
-}
+```env
+MYSQL_ADDRESS=localhost:3306
+MYSQL_USERNAME=root
+MYSQL_PASSWORD=your_password
 ```
 
-#### 响应结果
+### 3. 启动服务
 
-- `code`：错误码
-- `data`：当前计数值
-
-##### 响应结果示例
-
-```json
-{
-  "code": 0,
-  "data": 42
-}
+```bash
+npm start
 ```
 
-#### 调用示例
+服务将在 `http://localhost:80` 启动（或根据环境变量 `PORT` 配置的端口）
 
+## API 文档
+
+详细的 API 文档请查看 [API.md](./API.md)
+
+### 主要 API 端点
+
+- **用户相关**
+  - `POST /api/users` - 创建或获取用户
+  - `GET /api/users/:id` - 获取用户信息
+  - `GET /api/users/:id/rooms` - 获取用户房间历史
+
+- **房间相关**
+  - `POST /api/rooms` - 创建房间
+  - `GET /api/rooms/:code` - 获取房间信息
+  - `POST /api/rooms/:code/join` - 加入房间
+  - `POST /api/rooms/:code/leave` - 离开房间
+  - `POST /api/rooms/:code/close` - 关闭房间
+  - `GET /api/rooms/:code/members` - 获取房间成员
+  - `GET /api/rooms/:code/activities` - 获取房间活动记录
+
+- **转账相关**
+  - `POST /api/transactions` - 创建转账记录
+  - `GET /api/rooms/:code/transactions` - 获取房间转账记录
+
+## 使用示例
+
+### 创建用户并创建房间
+
+```bash
+# 1. 创建用户
+curl -X POST http://localhost:80/api/users \
+  -H "Content-Type: application/json" \
+  -d '{"username": "张三"}'
+
+# 响应: {"code":0,"message":"success","data":{"id":1,"username":"张三",...}}
+
+# 2. 创建房间（使用返回的 userId）
+curl -X POST http://localhost:80/api/rooms \
+  -H "Content-Type: application/json" \
+  -d '{"ownerId": 1, "name": "我的房间"}'
+
+# 响应: {"code":0,"message":"success","data":{"id":1,"code":"123456",...}}
+
+# 3. 查看房间信息
+curl http://localhost:80/api/rooms/123456
 ```
-curl -X POST -H 'content-type: application/json' -d '{"action": "inc"}' https://<云托管服务域名>/api/count
-```
+
+更多示例请参考 [API.md](./API.md)
 
 ## 使用注意
 如果不是通过微信云托管控制台部署模板代码，而是自行复制/下载模板代码后，手动新建一个服务并部署，需要在「服务设置」中补全以下环境变量，才可正常使用，否则会引发无法连接数据库，进而导致部署失败。

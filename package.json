@@ -1,10 +1,10 @@
 {
   "name": "wxcloudrun-express",
   "version": "1.0.0",
-  "description": "微信云托管 express 框架模版",
+  "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node --env-file=.local.env index.js"
   },
   "author": "",
   "license": "Apache-2.0",

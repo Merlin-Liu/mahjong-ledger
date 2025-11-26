@@ -1,0 +1,185 @@
+const express = require("express");
+const { User } = require("../db");
+const { successResponse, errorResponse, asyncHandler } = require("../utils");
+
+const router = express.Router();
+
+/**
+ * 创建或获取用户
+ * POST /api/users
+ * Body: { wxOpenId?: string, username: string }
+ */
+router.post("/", asyncHandler(async (req, res) => {
+  const { wxOpenId, username } = req.body;
+  
+  if (!username || username.trim() === "") {
+    return res.status(400).json(errorResponse("用户名不能为空", 400));
+  }
+
+  let user;
+  if (wxOpenId) {
+    // 如果提供了微信OpenID，先查找是否已存在
+    user = await User.findOne({ where: { wxOpenId } });
+    if (user) {
+      // 更新用户名
+      user.username = username.trim();
+      await user.save();
+    }
+  }
+
+  if (!user) {
+    // 创建新用户
+    user = await User.create({
+      wxOpenId: wxOpenId || null,
+      username: username.trim(),
+    });
+  }
+
+  res.json(successResponse({
+    id: user.id,
+    wxOpenId: user.wxOpenId,
+    username: user.username,
+    createdAt: user.createdAt,
+  }));
+}));
+
+/**
+ * 获取用户信息
+ * GET /api/users/:id
+ */
+router.get("/:id", asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const user = await User.findByPk(id);
+  
+  if (!user) {
+    return res.status(404).json(errorResponse("用户不存在", 404));
+  }
+
+  res.json(successResponse({
+    id: user.id,
+    wxOpenId: user.wxOpenId,
+    username: user.username,
+    createdAt: user.createdAt,
+  }));
+}));
+
+/**
+ * 小程序调用，获取微信 Open ID
+ * GET /api/wx_openid
+ */
+router.get("/wx_openid", (req, res) => {
+  if (req.headers["x-wx-source"]) {
+    res.send(req.headers["x-wx-openid"]);
+  } else {
+    res.status(400).json(errorResponse("非微信环境", 400));
+  }
+});
+
+/**
+ * 获取用户的房间历史
+ * GET /api/users/:id/rooms
+ */
+router.get("/:id/rooms", asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  
+  const user = await User.findByPk(id);
+  if (!user) {
+    return res.status(404).json(errorResponse("用户不存在", 404));
+  }
+
+  const { Room, RoomMember, Transaction } = require("../db");
+
+  // 获取用户加入过的所有房间
+  const memberships = await RoomMember.findAll({
+    where: { userId: id },
+    include: [
+      {
+        model: Room,
+        as: "room",
+        include: [
+          {
+            model: User,
+            as: "owner",
+            attributes: ["id", "username"],
+          },
+        ],
+      },
+    ],
+    order: [["joinedAt", "DESC"]],
+  });
+
+  // 获取每个房间的成员和转账记录
+  const roomsData = await Promise.all(
+    memberships.map(async (membership) => {
+      const room = membership.room;
+      
+      // 获取房间所有成员
+      const members = await RoomMember.findAll({
+        where: { roomId: room.id },
+        include: [
+          {
+            model: User,
+            as: "user",
+            attributes: ["id", "username"],
+          },
+        ],
+      });
+
+      // 获取房间所有转账记录
+      const transactions = await Transaction.findAll({
+        where: { roomId: room.id },
+        include: [
+          {
+            model: User,
+            as: "fromUser",
+            attributes: ["id", "username"],
+          },
+          {
+            model: User,
+            as: "toUser",
+            attributes: ["id", "username"],
+          },
+        ],
+      });
+
+      return {
+        room: {
+          id: room.id,
+          code: room.code,
+          name: room.name,
+          owner: {
+            id: room.owner.id,
+            username: room.owner.username,
+          },
+          status: room.status,
+          createdAt: room.createdAt,
+        },
+        membership: {
+          username: membership.username,
+          joinedAt: membership.joinedAt,
+          leftAt: membership.leftAt,
+        },
+        members: members.map(m => ({
+          userId: m.userId,
+          username: m.username,
+          joinedAt: m.joinedAt,
+          leftAt: m.leftAt,
+        })),
+        transactions: transactions.map(t => ({
+          fromUserId: t.fromUserId,
+          fromUsername: t.fromUser.username,
+          toUserId: t.toUserId,
+          toUsername: t.toUser.username,
+          amount: parseFloat(t.amount),
+          description: t.description,
+          createdAt: t.createdAt,
+        })),
+      };
+    })
+  );
+
+  res.json(successResponse(roomsData));
+}));
+
+module.exports = router;
+
