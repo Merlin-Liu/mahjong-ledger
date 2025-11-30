@@ -2,26 +2,14 @@
 <navigation-bar title="打牌记账" back="{{false}}" color="black" background="#FFF"></navigation-bar>
 <scroll-view class="scrollarea" scroll-y type="list">
   <view class="container">
-    <!-- 用户信息区域 -->
+    <!-- 用户信息区域（仅显示，不阻止操作） -->
     <view class="userinfo-card">
-      <block wx:if="{{!hasUserInfo}}">
-        <button class="avatar-wrapper" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
-          <image class="avatar" src="{{userInfo.avatarUrl}}"></image>
-        </button>
-        <view class="nickname-wrapper">
-          <text class="nickname-label">昵称</text>
-          <input type="nickname" class="nickname-input" placeholder="请输入昵称" bind:change="onInputChange" />
-        </view>
-        <view class="tip-text">请选择头像并输入昵称</view>
-      </block>
-      <block wx:else>
-        <image class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="aspectFill"></image>
-        <text class="userinfo-nickname">{{userInfo.nickName}}</text>
-      </block>
+      <image class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="aspectFill"></image>
+      <text class="userinfo-nickname">{{userInfo.nickName || '未登录'}}</text>
     </view>
 
-    <!-- 功能按钮区域 -->
-    <view class="actions" wx:if="{{hasUserInfo}}">
+    <!-- 功能按钮区域（始终显示） -->
+    <view class="actions">
       <!-- 开房间和扫码按钮并排 -->
       <view class="btn-row">
         <button class="btn-action btn-primary" bindtap="createRoom" disabled="{{loading}}">
@@ -62,3 +50,43 @@
     </view>
   </view>
 </scroll-view>
+
+<!-- 用户信息输入对话框 -->
+<t-dialog
+  visible="{{showUserDialog}}"
+  title="完善用户信息"
+  bind:confirm="onDialogConfirm"
+  bind:cancel="onDialogClose"
+  confirm-btn="{{dialogConfirmBtn}}"
+  cancel-btn="取消"
+>
+  <view slot="content" class="dialog-content">
+    <!-- 头像选择区域 -->
+    <view class="dialog-avatar-section">
+      <text class="dialog-label">选择头像</text>
+      <button class="dialog-avatar-btn" open-type="chooseAvatar" bind:chooseavatar="onDialogChooseAvatar">
+        <image class="dialog-avatar" src="{{dialogAvatarUrl}}" mode="aspectFill"></image>
+        <view class="dialog-avatar-mask">
+          <text class="dialog-avatar-icon">📷</text>
+        </view>
+      </button>
+      <text class="dialog-avatar-tip">点击选择头像</text>
+    </view>
+    
+    <!-- 昵称输入区域 -->
+    <view class="dialog-nickname-section">
+      <text class="dialog-label">输入昵称</text>
+      <view class="dialog-input-wrapper">
+        <input
+          type="nickname"
+          class="dialog-nickname-input"
+          value="{{dialogNickName}}"
+          placeholder="请输入昵称"
+          bind:input="onDialogNickNameInput"
+          bind:change="onDialogNickNameInput"
+          maxlength="20"
+        />
+      </view>
+    </view>
+  </view>
+</t-dialog>

@@ -272,3 +272,109 @@ page {
   color: #adb5bd;
   box-shadow: none;
 }
+
+/* 对话框样式 */
+.dialog-content {
+  padding: 40rpx 0 20rpx;
+}
+
+/* 头像选择区域 */
+.dialog-avatar-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 48rpx;
+}
+
+.dialog-label {
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 24rpx;
+  font-weight: 600;
+  letter-spacing: 1rpx;
+}
+
+.dialog-avatar-btn {
+  position: relative;
+  padding: 0;
+  width: 140rpx !important;
+  height: 140rpx !important;
+  border-radius: 50%;
+  overflow: visible;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.1);
+  border: 4rpx solid #fff;
+  transition: all 0.3s ease;
+}
+
+.dialog-avatar-btn::after {
+  border: none;
+}
+
+.dialog-avatar-btn:active {
+  transform: scale(0.95);
+}
+
+.dialog-avatar {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+
+.dialog-avatar-mask {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 44rpx;
+  height: 44rpx;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3rpx solid #fff;
+  box-shadow: 0 2rpx 8rpx rgba(102, 126, 234, 0.3);
+}
+
+.dialog-avatar-icon {
+  font-size: 24rpx;
+  line-height: 1;
+}
+
+.dialog-avatar-tip {
+  margin-top: 16rpx;
+  font-size: 24rpx;
+  color: #999;
+}
+
+/* 昵称输入区域 */
+.dialog-nickname-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dialog-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.dialog-nickname-input {
+  width: 100%;
+  height: 88rpx;
+  padding: 0 28rpx;
+  background: #f8f9fa;
+  border-radius: 16rpx;
+  font-size: 30rpx;
+  color: #333;
+  border: 2rpx solid transparent;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+.dialog-nickname-input:focus {
+  background: #fff;
+  border-color: #667eea;
+  box-shadow: 0 0 0 4rpx rgba(102, 126, 234, 0.1);
+}
