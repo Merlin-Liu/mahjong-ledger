@@ -16,25 +16,17 @@
           <view class="room-info">
             <text class="room-code">房间ID: {{item.room.code}}</text>
             <view class="room-status-wrapper">
-              <text class="room-status {{item.room.status === 'active' ? 'status-active' : 'status-closed'}}">
+              <view class="room-status {{item.room.status === 'active' ? 'status-active' : 'status-closed'}}">
                 {{item.room.status === 'active' ? '开启中' : '关闭'}}
-              </text>
-              <text class="room-owner-badge" wx:if="{{item.isOwner}}">我的</text>
+              </view>
+              <view class="room-owner-badge" wx:if="{{item.isOwner}}">我的</view>
             </view>
           </view>
         </view>
         
-        <view class="room-body">
-          <view class="room-meta">
-            <view class="meta-item">
-              <text class="meta-label">创建时间:</text>
-              <text class="meta-value">{{item.formattedCreatedAt}}</text>
-            </view>
-            <view class="meta-item">
-              <text class="meta-label">房主:</text>
-              <text class="meta-value">{{item.room.owner.username}}</text>
-            </view>
-          </view>
+        <view class="room-footer">
+          <text class="room-time">{{item.formattedCreatedAt}}</text>
+          <text class="room-owner">房主: {{item.room.owner.username}}</text>
         </view>
       </view>
     </view>
