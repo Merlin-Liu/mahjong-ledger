@@ -49,35 +49,35 @@ router.post("/", asyncHandler(async (req, res) => {
   });
 
   // ====== 测试用，自动加入一个测试用户进入房间 ======
-  const testUserAvatarUrl = 'https://himg.bdimg.com/sys/portraitn/item/public.1.88a49878.E-rOvrkJXaMlqINvh2SzAA?_d=29418018';
-  let testUser = await User.findOne({
-    where: {
-      username: '测试用户',
-      wxOpenId: 'test_user_openid' // 确保是测试用户，不是真实用户
-    }
-  });
-  if (!testUser) {
-    testUser = await User.create({
-      wxOpenId: 'test_user_openid',
-      username: '测试用户',
-      avatarUrl: testUserAvatarUrl,
-    });
-  } else {
-    // 如果测试用户已存在，确保头像是最新的
-    if (testUser.avatarUrl !== testUserAvatarUrl) {
-      testUser.avatarUrl = testUserAvatarUrl;
-      await testUser.save();
-    }
-  }
-  if (testUser.id !== ownerId) {
-    await RoomMember.create({
-      roomId: room.id,
-      userId: testUser.id,
-      username: testUser.username,
-      avatarUrl: testUser.avatarUrl,
-      joinedAt: new Date(),
-    });
-  }
+  // const testUserAvatarUrl = 'https://himg.bdimg.com/sys/portraitn/item/public.1.88a49878.E-rOvrkJXaMlqINvh2SzAA?_d=29418018';
+  // let testUser = await User.findOne({
+  //   where: {
+  //     username: '测试用户',
+  //     wxOpenId: 'test_user_openid' // 确保是测试用户，不是真实用户
+  //   }
+  // });
+  // if (!testUser) {
+  //   testUser = await User.create({
+  //     wxOpenId: 'test_user_openid',
+  //     username: '测试用户',
+  //     avatarUrl: testUserAvatarUrl,
+  //   });
+  // } else {
+  //   // 如果测试用户已存在，确保头像是最新的
+  //   if (testUser.avatarUrl !== testUserAvatarUrl) {
+  //     testUser.avatarUrl = testUserAvatarUrl;
+  //     await testUser.save();
+  //   }
+  // }
+  // if (testUser.id !== ownerId) {
+  //   await RoomMember.create({
+  //     roomId: room.id,
+  //     userId: testUser.id,
+  //     username: testUser.username,
+  //     avatarUrl: testUser.avatarUrl,
+  //     joinedAt: new Date(),
+  //   });
+  // }
 
   res.json(successResponse({
     id: room.id,
@@ -211,24 +211,24 @@ router.post("/:code/join", asyncHandler(async (req, res) => {
           leftAt: null,
         },
       });
-      
+
       if (checkMember) {
         return res.status(400).json(errorResponse("您已经在房间中", 400));
       }
-      
+
       // 如果用户不在房间中，尝试删除唯一索引并重试
       try {
         const { sequelize } = require("../db");
         const [indexes] = await sequelize.query(`
           SHOW INDEX FROM \`room_members\` WHERE Key_name = 'unique_room_user';
         `);
-        
+
         if (indexes && indexes.length > 0) {
           await sequelize.query(`
             DROP INDEX \`unique_room_user\` ON \`room_members\`;
           `);
           console.log("已删除唯一索引 unique_room_user，重试创建成员记录");
-          
+
           // 重试创建成员记录
           member = await RoomMember.create({
             roomId: room.id,
