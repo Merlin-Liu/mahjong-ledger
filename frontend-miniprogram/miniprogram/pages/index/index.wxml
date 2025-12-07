@@ -1,5 +1,6 @@
 <!--index.wxml-->
 <navigation-bar title="打牌记账" back="{{false}}" color="black" background="#FFF"></navigation-bar>
+
 <scroll-view class="scrollarea" scroll-y type="list">
   <view class="container">
     <!-- 用户信息区域（仅显示，不阻止操作） -->
@@ -33,6 +34,7 @@
         <view class="card-header">
           <text class="card-title">加入房间</text>
         </view>
+
         <view class="input-wrapper">
           <input 
             class="room-code-input" 
