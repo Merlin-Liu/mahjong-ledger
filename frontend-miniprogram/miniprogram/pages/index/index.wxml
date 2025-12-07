@@ -49,6 +49,14 @@
           </button>
         </view>
       </view>
+
+      <!-- 最近的房间列表 -->
+      <recent-rooms
+        rooms="{{recentRooms}}"
+        userId="{{userId}}"
+        bind:roomtap="onRecentRoomTap"
+        bind:viewmore="goToRoomList"
+      ></recent-rooms>
     </view>
   </view>
 </scroll-view>

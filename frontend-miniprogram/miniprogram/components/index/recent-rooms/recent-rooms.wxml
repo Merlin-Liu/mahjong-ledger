@@ -1,0 +1,45 @@
+<!--recent-rooms.wxml-->
+<view class="action-card" wx:if="{{userId > 0}}">
+  <view class="card-header">
+    <text class="card-title">最近的房间</text>
+  </view>
+  
+  <!-- 房间列表 -->
+  <view class="recent-rooms" wx:if="{{rooms.length > 0}}">
+    <view 
+      class="recent-room-item" 
+      wx:for="{{rooms}}" 
+      wx:key="room.id"
+      data-code="{{item.room.code}}"
+      bindtap="onRoomTap"
+    >
+      <view class="room-item-header">
+        <text class="room-item-code">房间ID: {{item.room.code}}</text>
+        <view class="room-item-badges">
+          <view class="room-item-status {{item.room.status === 'active' ? 'status-active' : 'status-closed'}}">
+            {{item.room.status === 'active' ? '开启中' : '关闭'}}
+          </view>
+          <view class="room-item-owner-badge" wx:if="{{item.isOwner}}">我的</view>
+        </view>
+      </view>
+      <view class="room-item-footer">
+        <text class="room-item-time">{{item.formattedCreatedAt}}</text>
+        <text class="room-item-owner">房主: {{item.room.owner.username}}</text>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 空状态 -->
+  <view class="recent-rooms-empty" wx:else>
+    <text class="empty-text">暂无房间记录</text>
+  </view>
+  
+  <!-- 查看更多按钮 -->
+  <view class="view-more-wrapper" wx:if="{{rooms.length > 0}}">
+    <button class="btn-view-more" bindtap="onViewMore">
+      <text>查看更多</text>
+      <text class="btn-view-more-arrow">→</text>
+    </button>
+  </view>
+</view>
+

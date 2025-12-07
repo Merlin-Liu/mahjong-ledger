@@ -31,16 +31,36 @@ Page({
     dialogAvatarUrl: defaultAvatarUrl,  // 对话框中的头像
     pendingAction: null as (() => Promise<void>) | null,  // 待执行的操作
     dialogConfirmBtn: { content: '创建', disabled: true },  // 确认按钮配置
+    recentRooms: [] as Array<{
+      room: {
+        id: number
+        code: string
+        name: string
+        owner: {
+          id: number
+          username: string
+          avatarUrl: string | null
+        }
+        status: string
+        createdAt: string
+      }
+      isOwner: boolean
+      formattedCreatedAt: string
+    }>,  // 最近的房间列表
+    loadingRooms: false,  // 加载房间列表的状态
   },
 
   onLoad() {
     // 只加载用户信息用于显示，不阻止功能使用
     this.loadUserInfo()
+    // 加载最近的房间列表
+    this.loadRecentRooms()
   },
 
   onShow() {
-    // 每次显示页面时刷新用户信息
+    // 每次显示页面时刷新用户信息和房间列表
     this.loadUserInfo()
+    this.loadRecentRooms()
   },
 
   // 加载用户信息（仅用于显示）
@@ -76,6 +96,82 @@ Page({
           userId: 0,
         })
       }
+    }
+  },
+
+  // 加载最近的房间列表（最多5个）
+  async loadRecentRooms() {
+    // 检查是否有用户ID
+    if (!this.data.userId || this.data.userId === 0) {
+      // 没有用户信息，清空房间列表
+      this.setData({ recentRooms: [] })
+      return
+    }
+
+    const userId = this.data.userId
+    this.setData({ loadingRooms: true })
+
+    try {
+      const roomsData = await userApi.getUserRooms(userId, 3)
+      
+      // 处理房间数据，添加格式化时间和是否房主标志
+      // 确保只显示用户创建或加入过的房间（后端已过滤，这里再次验证）
+      const rooms = roomsData
+        .filter((item) => {
+          // 验证：用户必须是房主，或者有membership记录（表示加入过）
+          const isOwner = item.room.owner.id === userId
+          const hasMembership = item.membership && item.membership.joinedAt
+          return isOwner || hasMembership
+        })
+        .slice(0, 5) // 只取前5个
+        .map((item) => {
+          const isOwner = item.room.owner.id === userId
+          const createdAt = new Date(item.room.createdAt)
+          const formattedCreatedAt = this.formatDate(createdAt)
+          
+          return {
+            room: item.room,
+            isOwner,
+            formattedCreatedAt,
+          }
+        })
+
+      this.setData({ recentRooms: rooms, loadingRooms: false })
+    } catch (err: any) {
+      console.error('加载房间列表失败:', err)
+      // 加载失败不影响页面使用，静默处理
+      this.setData({ recentRooms: [], loadingRooms: false })
+    }
+  },
+
+  // 格式化日期
+  formatDate(date: Date): string {
+    const now = new Date()
+    const diff = now.getTime() - date.getTime()
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+    
+    if (days === 0) {
+      return '今天'
+    } else if (days === 1) {
+      return '昨天'
+    } else if (days < 7) {
+      return `${days}天前`
+    } else if (days < 30) {
+      const weeks = Math.floor(days / 7)
+      return `${weeks}周前`
+    } else {
+      const months = Math.floor(days / 30)
+      return `${months}个月前`
+    }
+  },
+
+  // 点击房间卡片（从组件触发）
+  onRecentRoomTap(e: any) {
+    const { roomCode } = e.detail
+    if (roomCode) {
+      wx.navigateTo({
+        url: `/pages/room/room?code=${roomCode}`,
+      })
     }
   },
 
@@ -253,6 +349,9 @@ Page({
     // 保存到全局和本地存储
     app.globalData.userInfo = userInfo
     wx.setStorageSync('userInfo', userInfo)
+    
+    // 用户创建或更新后，重新加载房间列表
+    this.loadRecentRooms()
   },
 
   // 开房间
@@ -412,6 +511,13 @@ Page({
           this.setData({ loading: false })
         }
       }
+    })
+  },
+
+  // 跳转到房间列表
+  goToRoomList() {
+    wx.navigateTo({
+      url: '/pages/room-list/room-list',
     })
   },
 

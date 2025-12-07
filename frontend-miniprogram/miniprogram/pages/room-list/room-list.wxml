@@ -1,0 +1,50 @@
+<!--room-list.wxml-->
+<navigation-bar title="我的房间" back="{{true}}" color="black" background="#FFF"></navigation-bar>
+
+<scroll-view class="scrollarea" scroll-y type="list" enable-back-to-top="{{true}}" refresher-enabled="{{true}}" refresher-triggered="{{loading}}" bindrefresherrefresh="onPullDownRefresh">
+  <view class="container">
+    <!-- 房间列表 -->
+    <view class="room-list" wx:if="{{rooms.length > 0}}">
+      <view 
+        class="room-item" 
+        wx:for="{{rooms}}" 
+        wx:key="room.id"
+        data-code="{{item.room.code}}"
+        bindtap="onRoomTap"
+      >
+        <view class="room-header">
+          <view class="room-info">
+            <text class="room-code">房间ID: {{item.room.code}}</text>
+            <view class="room-status-wrapper">
+              <text class="room-status {{item.room.status === 'active' ? 'status-active' : 'status-closed'}}">
+                {{item.room.status === 'active' ? '开启中' : '关闭'}}
+              </text>
+              <text class="room-owner-badge" wx:if="{{item.isOwner}}">我的</text>
+            </view>
+          </view>
+        </view>
+        
+        <view class="room-body">
+          <view class="room-meta">
+            <view class="meta-item">
+              <text class="meta-label">创建时间:</text>
+              <text class="meta-value">{{item.formattedCreatedAt}}</text>
+            </view>
+            <view class="meta-item">
+              <text class="meta-label">房主:</text>
+              <text class="meta-value">{{item.room.owner.username}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="empty-state" wx:else>
+      <text class="empty-icon">🏠</text>
+      <text class="empty-text">暂无房间记录</text>
+      <text class="empty-desc">近3个月内创建或加入的房间将显示在这里</text>
+    </view>
+  </view>
+</scroll-view>
+

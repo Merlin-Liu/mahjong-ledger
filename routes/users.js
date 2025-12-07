@@ -1,5 +1,6 @@
 const express = require("express");
 const https = require("https");
+const { Sequelize } = require("sequelize");
 const { User } = require("../db");
 const { successResponse, errorResponse, asyncHandler } = require("../utils");
 
@@ -149,9 +150,11 @@ router.post("/wx_openid_by_code", asyncHandler(async (req, res) => {
 /**
  * 获取用户的房间历史
  * GET /api/users/:id/rooms
+ * Query参数: months (可选，默认3) - 查询近N个月的数据
  */
 router.get("/:id/rooms", asyncHandler(async (req, res) => {
   const { id } = req.params;
+  const months = parseInt(req.query.months) || 3; // 默认查询近3个月
 
   const user = await User.findByPk(id);
   if (!user) {
@@ -160,8 +163,12 @@ router.get("/:id/rooms", asyncHandler(async (req, res) => {
 
   const { Room, RoomMember, Transaction } = require("../db");
 
-  // 获取用户加入过的所有房间
-  const memberships = await RoomMember.findAll({
+  // 计算N个月前的日期
+  const monthsAgo = new Date();
+  monthsAgo.setMonth(monthsAgo.getMonth() - months);
+
+  // 获取用户加入过的所有房间（优先显示当前还在的房间）
+  const allMemberships = await RoomMember.findAll({
     where: { userId: id },
     include: [
       {
@@ -176,7 +183,19 @@ router.get("/:id/rooms", asyncHandler(async (req, res) => {
         ],
       },
     ],
-    order: [["joinedAt", "DESC"]],
+    order: [
+      // 先按是否还在房间排序（leftAt为null的在前，使用CASE WHEN实现）
+      [Sequelize.literal('CASE WHEN leftAt IS NULL THEN 0 ELSE 1 END'), 'ASC'],
+      // 再按加入时间排序
+      ["joinedAt", "DESC"],
+    ],
+  });
+
+  // 过滤出近N个月内创建或加入的房间
+  const memberships = allMemberships.filter((membership) => {
+    const roomCreatedAt = new Date(membership.room.createdAt);
+    const joinedAt = new Date(membership.joinedAt);
+    return roomCreatedAt >= monthsAgo || joinedAt >= monthsAgo;
   });
 
   // 获取每个房间的成员和转账记录

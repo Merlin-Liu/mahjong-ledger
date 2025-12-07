@@ -1,7 +1,8 @@
 {
   "pages": [
     "pages/index/index",
-    "pages/room/room"
+    "pages/room/room",
+    "pages/room-list/room-list"
   ],
   "window": {
     "navigationBarTextStyle": "black",
