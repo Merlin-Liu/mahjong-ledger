@@ -10,16 +10,16 @@
   ></member-list>
 
   <!-- 房间日志组件 -->
-  <room-log activities="{{activities}}"></room-log>
+  <logs activities="{{activities}}"></logs>
 
   <!-- 操作按钮组件 -->
-  <room-actions
+  <actions
     is-owner="{{isOwner}}"
     room-code="{{roomCode}}"
     user-id="{{userId}}"
     bind:leaveroom="onLeaveRoomSuccess"
     bind:closeroom="onCloseRoomSuccess"
-  ></room-actions>
+  ></actions>
 
   <!-- 转账对话框组件 -->
   <transaction-dialog

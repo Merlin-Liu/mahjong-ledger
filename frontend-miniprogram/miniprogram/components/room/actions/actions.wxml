@@ -1,4 +1,4 @@
-<!--room-actions.wxml-->
+<!--actions.wxml-->
 <view class="actions">
   <button class="btn-action btn-share" open-type="share">
     <text class="btn-icon">📤</text>

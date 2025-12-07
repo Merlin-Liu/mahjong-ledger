@@ -2,8 +2,8 @@
   "usingComponents": {
     "navigation-bar": "../../components/navigation-bar/navigation-bar",
     "member-list": "../../components/room/member-list/member-list",
-    "room-log": "../../components/room/room-log/room-log",
-    "room-actions": "../../components/room/room-actions/room-actions",
+    "logs": "../../components/room/logs/logs",
+    "actions": "../../components/room/actions/actions",
     "transaction-dialog": "../../components/room/transaction-dialog/transaction-dialog"
   }
 }

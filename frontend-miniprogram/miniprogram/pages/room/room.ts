@@ -112,8 +112,10 @@ Page({
       await this.loadRoomInfo()
     } catch (err) {
       // 如果获取房间信息失败，尝试加入房间
+      wx.showLoading({ title: '加入中...' })
       try {
         await roomApi.joinRoom(this.data.roomCode, userId)
+        wx.hideLoading()
         wx.showToast({
           title: '已加入房间',
           icon: 'success',
@@ -121,6 +123,7 @@ Page({
         // 重新加载房间信息
         await this.loadRoomInfo()
       } catch (joinErr: any) {
+        wx.hideLoading()
         console.error('加入房间失败:', joinErr)
         wx.showToast({
           title: joinErr.message || '加入房间失败',
@@ -276,7 +279,7 @@ Page({
     }
   },
 
-  // 离开房间成功回调（逻辑已迁移到 room-actions 组件）
+  // 离开房间成功回调（逻辑已迁移到 actions 组件）
   onLeaveRoomSuccess(e: { detail?: { success?: boolean } }) {
     if (e.detail?.success) {
       // 清除定时器
@@ -286,7 +289,7 @@ Page({
     }
   },
 
-  // 结束房间成功回调（逻辑已迁移到 room-actions 组件）
+  // 结束房间成功回调（逻辑已迁移到 actions 组件）
   onCloseRoomSuccess(e: { detail?: { success?: boolean } }) {
     if (e.detail?.success) {
       // 清除定时器

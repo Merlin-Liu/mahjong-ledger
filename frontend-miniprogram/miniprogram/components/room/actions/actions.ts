@@ -1,4 +1,4 @@
-// room-actions.ts
+// actions.ts
 import { roomApi } from '../../../utils/api'
 
 Component({

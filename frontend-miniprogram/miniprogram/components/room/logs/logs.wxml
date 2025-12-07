@@ -1,0 +1,25 @@
+<!--logs.wxml-->
+<view class="log-section">
+  <view class="section-title">房间日志</view>
+  <view class="log-scroll">
+    <view class="log-list">
+      <view class="log-item" wx:for="{{formattedActivities}}" wx:key="index">
+        <view class="log-message">
+          <block wx:if="{{item.isTransaction}}">
+            <text class="transaction-from">{{item.fromUsername}}</text>
+            <text class="transaction-text"> 向 </text>
+            <text class="transaction-to">{{item.toUsername}}</text>
+            <text class="transaction-text"> 转账 </text>
+            <text class="transaction-amount">{{item.amount}} 元</text>
+          </block>
+          <block wx:else>
+            {{item.message}}
+          </block>
+        </view>
+        <view class="log-time">{{item.formattedTime}}</view>
+      </view>
+      <view class="empty-tip" wx:if="{{formattedActivities.length === 0}}">暂无日志</view>
+    </view>
+  </view>
+</view>
+

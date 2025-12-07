@@ -1,4 +1,4 @@
-// room-log.ts
+// logs.ts
 interface Activity {
   type: 'join' | 'leave' | 'transaction'
   userId?: number
@@ -81,10 +81,22 @@ Component({
     'activities': function(activities: Activity[]) {
       // 格式化活动记录时间并反转顺序（最新的在前）
       const that = this as any
-      const formattedActivities = [...activities].reverse().map((activity) => ({
-        ...activity,
-        formattedTime: that.formatTime(activity.timestamp)
-      }))
+      const formattedActivities = [...activities].reverse().map((activity) => {
+        const formattedActivity: any = {
+          ...activity,
+          formattedTime: that.formatTime(activity.timestamp)
+        }
+        
+        // 如果是转账类型，解析消息结构
+        if (activity.type === 'transaction' && activity.fromUsername && activity.toUsername && activity.amount !== undefined) {
+          formattedActivity.isTransaction = true
+          formattedActivity.fromUsername = activity.fromUsername
+          formattedActivity.toUsername = activity.toUsername
+          formattedActivity.amount = activity.amount
+        }
+        
+        return formattedActivity
+      })
       that.setData({ formattedActivities })
     }
   }

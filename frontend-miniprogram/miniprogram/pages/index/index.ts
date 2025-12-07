@@ -261,9 +261,11 @@ Page({
 
     await this.checkAndCreateUser(async () => {
       this.setData({ loading: true })
+      wx.showLoading({ title: '创建中...' })
 
       try {
         const room = await roomApi.createRoom(this.data.userId, '我的房间')
+        wx.hideLoading()
         wx.showToast({
           title: '房间创建成功',
           icon: 'success',
@@ -276,6 +278,7 @@ Page({
           })
         }, 1000)
       } catch (err: any) {
+        wx.hideLoading()
         console.error('创建房间失败:', err)
         const errorMessage = err.message || '创建房间失败'
         
@@ -338,6 +341,7 @@ Page({
 
     await this.checkAndCreateUser(async () => {
       this.setData({ loading: true })
+      wx.showLoading({ title: '加入中...' })
 
       try {
         // 先获取房间信息
@@ -346,6 +350,7 @@ Page({
         // 加入房间
         await roomApi.joinRoom(roomCode, this.data.userId)
         
+        wx.hideLoading()
         wx.showToast({
           title: '加入房间成功',
           icon: 'success',
@@ -361,6 +366,7 @@ Page({
           })
         }, 1000)
       } catch (err: any) {
+        wx.hideLoading()
         console.error('加入房间失败:', err)
         const errorMessage = err.message || '加入房间失败'
         
@@ -423,25 +429,28 @@ Page({
           return
         }
 
-          try {
-            // 先获取房间信息
-            await roomApi.getRoomInfo(roomCode)
-            
-            // 加入房间
-            await roomApi.joinRoom(roomCode, this.data.userId)
-            
-            wx.showToast({
-              title: '加入房间成功',
-              icon: 'success',
+        wx.showLoading({ title: '加入中...' })
+        try {
+          // 先获取房间信息
+          await roomApi.getRoomInfo(roomCode)
+          
+          // 加入房间
+          await roomApi.joinRoom(roomCode, this.data.userId)
+          
+          wx.hideLoading()
+          wx.showToast({
+            title: '加入房间成功',
+            icon: 'success',
+          })
+          
+          // 跳转到房间页面
+          setTimeout(() => {
+            wx.redirectTo({
+              url: `/pages/room/room?code=${roomCode}`,
             })
-            
-            // 跳转到房间页面
-            setTimeout(() => {
-              wx.redirectTo({
-                url: `/pages/room/room?code=${roomCode}`,
-              })
-            }, 1000)
-          } catch (err: any) {
+          }, 1000)
+        } catch (err: any) {
+          wx.hideLoading()
           console.error('加入房间失败:', err)
           const errorMessage = err.message || '加入房间失败'
           

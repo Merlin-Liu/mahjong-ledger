@@ -1,0 +1,98 @@
+/**logs.less**/
+/* 房间日志区域 - 占满剩余空间 */
+.log-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background-color: #fff;
+  margin-top: 12rpx;
+  border-radius: 20rpx 20rpx 0 0;
+  padding: 20rpx 40rpx 0;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.section-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #333;
+  line-height: 1.2;
+}
+
+.log-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-right: -40rpx;
+  padding-right: 40rpx;
+}
+
+.log-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+  padding-bottom: 20rpx;
+  margin-top: 20rpx;
+}
+
+.log-item {
+  padding: 12rpx 20rpx;
+  background-color: #f9f9f9;
+  border-radius: 15rpx;
+  border-left: 4rpx solid #667eea;
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.log-message {
+  font-size: 22rpx;
+  color: #333;
+  line-height: 1.6;
+  flex: 1;
+  word-wrap: break-word;
+  word-break: break-all;
+}
+
+.transaction-from {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #667eea;
+}
+
+.transaction-to {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #07c160;
+}
+
+.transaction-amount {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #fa5151;
+}
+
+.transaction-text {
+  font-size: 22rpx;
+  color: #333;
+  font-weight: normal;
+}
+
+.log-time {
+  font-size: 20rpx;
+  color: #999;
+  display: block;
+  visibility: visible;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.empty-tip {
+  text-align: center;
+  padding: 60rpx 0;
+  color: #999;
+  font-size: 28rpx;
+}
+
