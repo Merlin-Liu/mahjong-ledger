@@ -13,7 +13,7 @@
     </view>
     <scroll-view class="members-scroll" scroll-x="true" enable-flex="true">
       <view class="members-list">
-        <view class="member-item" wx:for="{{members}}" wx:key="id">
+        <view class="member-item" wx:for="{{members}}" wx:key="id" bindtap="onMemberTap" data-member="{{item}}">
           <image class="member-avatar" src="{{item.avatarUrl}}" mode="aspectFill"></image>
           <view class="member-name">{{item.username}}</view>
           <view class="member-balance {{item.balance >= 0 ? 'positive' : 'negative'}}">
@@ -53,5 +53,46 @@
       <text class="btn-text">结束房间</text>
     </button>
   </view>
+
+  <!-- 转账对话框 -->
+  <t-dialog
+    visible="{{showTransactionDialog}}"
+    title="向 {{targetMember.username}} 转账"
+    bind:confirm="onTransactionConfirm"
+    bind:cancel="onTransactionCancel"
+    confirm-btn="确认转账"
+    cancel-btn="取消"
+    async-close="{{true}}"
+  >
+    <view slot="content" class="transaction-dialog-content">
+      <view class="transaction-target">
+        <image class="transaction-target-avatar" src="{{targetMember.avatarUrl}}" mode="aspectFill"></image>
+        <text class="transaction-target-name">{{targetMember.username}}</text>
+      </view>
+      <view class="transaction-form">
+        <view class="transaction-form-item">
+          <text class="transaction-label">转账金额（元）</text>
+          <input
+            class="transaction-input"
+            type="digit"
+            value="{{transactionAmount}}"
+            placeholder="请输入转账金额"
+            bind:input="onTransactionAmountInput"
+            maxlength="10"
+          />
+        </view>
+        <view class="transaction-form-item">
+          <text class="transaction-label">备注（可选）</text>
+          <input
+            class="transaction-input"
+            value="{{transactionDescription}}"
+            placeholder="请输入备注"
+            bind:input="onTransactionDescriptionInput"
+            maxlength="50"
+          />
+        </view>
+      </view>
+    </view>
+  </t-dialog>
 </view>
 

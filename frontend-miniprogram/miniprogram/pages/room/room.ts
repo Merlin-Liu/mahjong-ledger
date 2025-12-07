@@ -55,6 +55,11 @@ Page({
     isOwner: false,
     loading: false,
     pollTimer: null as any,
+    // 转账对话框相关
+    showTransactionDialog: false,
+    targetMember: null as Member | null,
+    transactionAmount: '',
+    transactionDescription: '',
   },
 
   onLoad(options: { code: string }) {
@@ -409,6 +414,103 @@ Page({
       console.error('格式化时间失败:', err, timestamp)
       return ''
     }
+  },
+
+  // 点击成员卡片
+  onMemberTap(e: any) {
+    const member = e.currentTarget.dataset.member as Member
+    
+    // 不能向自己转账
+    if (member.userId === this.data.userId) {
+      wx.showToast({
+        title: '不能向自己转账',
+        icon: 'none',
+      })
+      return
+    }
+
+    this.setData({
+      showTransactionDialog: true,
+      targetMember: member,
+      transactionAmount: '',
+      transactionDescription: '',
+    })
+  },
+
+  // 转账金额输入
+  onTransactionAmountInput(e: any) {
+    this.setData({
+      transactionAmount: e.detail.value,
+    })
+  },
+
+  // 转账备注输入
+  onTransactionDescriptionInput(e: any) {
+    this.setData({
+      transactionDescription: e.detail.value,
+    })
+  },
+
+  // 确认转账
+  async onTransactionConfirm() {
+    const { targetMember, transactionAmount, transactionDescription, roomCode, userId } = this.data
+
+    if (!targetMember) {
+      return
+    }
+
+    // 验证金额
+    const amount = parseFloat(transactionAmount)
+    if (!transactionAmount || isNaN(amount) || amount <= 0) {
+      wx.showToast({
+        title: '请输入有效的转账金额',
+        icon: 'none',
+      })
+      return
+    }
+
+    try {
+      // 调用转账API
+      await transactionApi.createTransaction(
+        roomCode,
+        userId,
+        targetMember.userId,
+        amount,
+        transactionDescription.trim() || undefined
+      )
+
+      wx.showToast({
+        title: '转账成功',
+        icon: 'success',
+      })
+
+      // 关闭对话框
+      this.setData({
+        showTransactionDialog: false,
+        targetMember: null,
+        transactionAmount: '',
+        transactionDescription: '',
+      })
+
+      // 重新加载房间状态
+      await this.loadRoomStatus()
+    } catch (err: any) {
+      console.error('转账失败:', err)
+      wx.showToast({
+        title: err.message || '转账失败',
+        icon: 'none',
+      })
+    }
+  },
+
+  // 取消转账
+  onTransactionCancel() {
+    this.setData({
+      showTransactionDialog: false,
+      targetMember: null,
+      transactionAmount: '',
+      transactionDescription: '',
+    })
   },
 })
 
