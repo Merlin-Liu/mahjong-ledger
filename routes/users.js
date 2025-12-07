@@ -6,6 +6,8 @@ const { successResponse, errorResponse, asyncHandler } = require("../utils");
 
 const router = express.Router();
 
+const APP_ID = 'wx7c3b8743a2240ef6';
+const APP_SECRET = '19833ddf5ecbd4bdaa3eaff56b848a58';
 /**
  * 创建或获取用户
  * POST /api/users
@@ -101,16 +103,10 @@ router.post("/wx_openid_by_code", asyncHandler(async (req, res) => {
   }
 
   // 从环境变量获取小程序 appid 和 secret
-  const appid = process.env.WX_APPID;
-  const secret = process.env.WX_SECRET;
-
-  if (!appid || !secret) {
-    return res.status(500).json(errorResponse("服务器未配置小程序 appid 或 secret", 500));
-  }
 
   try {
     // 调用微信接口换取 openid
-    const url = `https://api.weixin.qq.com/sns/jscode2session?appid=${appid}&secret=${secret}&js_code=${code}&grant_type=authorization_code`;
+    const url = `https://api.weixin.qq.com/sns/jscode2session?appid=${APP_ID}&secret=${APP_SECRET}&js_code=${code}&grant_type=authorization_code`;
 
     const response = await new Promise((resolve, reject) => {
       https.get(url, (res) => {
@@ -120,12 +116,15 @@ router.post("/wx_openid_by_code", asyncHandler(async (req, res) => {
         });
         res.on('end', () => {
           try {
-            resolve(JSON.parse(data));
+            const parsed = JSON.parse(data);
+            resolve(parsed);
           } catch (e) {
-            reject(e);
+            console.error('解析微信接口响应失败:', e, '原始数据:', data);
+            reject(new Error('解析微信接口响应失败: ' + e.message));
           }
         });
       }).on('error', (err) => {
+        console.error('请求微信接口失败:', err);
         reject(err);
       });
     });
@@ -133,17 +132,23 @@ router.post("/wx_openid_by_code", asyncHandler(async (req, res) => {
     const { openid, session_key, errcode, errmsg } = response;
 
     if (errcode) {
+      console.error('微信接口返回错误:', { errcode, errmsg, code });
       return res.status(400).json(errorResponse(`微信接口错误: ${errmsg} (${errcode})`, 400));
     }
 
     if (!openid) {
+      console.error('未能获取到 openid:', response);
       return res.status(400).json(errorResponse("未能获取到 openid", 400));
     }
 
     res.json(successResponse({ openid, session_key }));
   } catch (error) {
-    console.error('换取 openid 失败:', error);
-    res.status(500).json(errorResponse("换取 openid 失败: " + error.message, 500));
+    console.error('换取 openid 失败:', {
+      error: error.message,
+      stack: error.stack,
+      code: code ? '已提供' : '未提供'
+    });
+    res.status(500).json(errorResponse("换取 openid 失败: " + (error.message || '未知错误'), 500));
   }
 }));
 
@@ -203,7 +208,7 @@ router.get("/:id/rooms", asyncHandler(async (req, res) => {
   filteredMemberships.forEach((membership) => {
     const roomId = membership.room.id;
     const existing = membershipMap.get(roomId);
-    
+
     // 如果房间不存在，或者当前记录的加入时间更新，则更新
     if (!existing || new Date(membership.joinedAt) > new Date(existing.joinedAt)) {
       membershipMap.set(roomId, membership);

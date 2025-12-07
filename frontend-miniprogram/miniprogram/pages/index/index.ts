@@ -49,19 +49,31 @@ Page({
       formattedCreatedAt: string
     }>,  // 最近的房间列表
     loadingRooms: false,  // 加载房间列表的状态
+    isFirstLoad: true,  // 是否是首次加载
   },
 
   onLoad() {
     // 只加载用户信息用于显示，不阻止功能使用
     this.loadUserInfo()
-    // 加载最近的房间列表
-    this.loadRecentRooms()
+    // 首次加载时，在 onLoad 中不调用 loadRecentRooms，避免与 onShow 重复调用
+    // 房间列表会在 onShow 中加载
   },
 
   onShow() {
     // 每次显示页面时刷新用户信息和房间列表
     this.loadUserInfo()
-    this.loadRecentRooms()
+    
+    // 如果是首次加载，标记为已加载，避免重复调用
+    if (this.data.isFirstLoad) {
+      this.setData({ isFirstLoad: false })
+      // 首次加载时，延迟一下确保用户信息已加载完成
+      setTimeout(() => {
+        this.loadRecentRooms()
+      }, 100)
+    } else {
+      // 非首次加载（从后台回来），直接刷新
+      this.loadRecentRooms()
+    }
   },
 
   // 加载用户信息（仅用于显示）
@@ -102,6 +114,11 @@ Page({
 
   // 加载最近的房间列表（最多5个）
   async loadRecentRooms() {
+    // 如果正在加载，避免重复请求
+    if (this.data.loadingRooms) {
+      return
+    }
+
     // 检查是否有用户ID
     if (!this.data.userId || this.data.userId === 0) {
       // 没有用户信息，清空房间列表
@@ -311,6 +328,13 @@ Page({
       
       // 如果没有，则通过 wx.login 获取
       if (!wxOpenId) {
+        // 显示加载提示
+        wx.showToast({
+          title: '正在获取用户信息...',
+          icon: 'loading',
+          duration: 2000,
+        })
+        
         const loginRes = await new Promise<any>((resolve, reject) => {
           wx.login({
             success: resolve,
@@ -325,6 +349,13 @@ Page({
           
           // 保存 openid 到本地存储
           wx.setStorageSync('wxOpenId', wxOpenId)
+          
+          // 显示成功提示
+          wx.showToast({
+            title: '获取用户信息成功',
+            icon: 'success',
+            duration: 1500,
+          })
         }
       }
     } catch (err: any) {
@@ -334,6 +365,13 @@ Page({
         error: errorMessage,
         details: err,
         hint: '如果是本地开发，请确保后端已配置 WX_APPID 和 WX_SECRET 环境变量'
+      })
+      
+      // 显示错误提示
+      wx.showToast({
+        title: '获取用户信息失败',
+        icon: 'none',
+        duration: 2000,
       })
       
       // 如果获取 openid 失败，使用本地生成的唯一ID作为降级方案

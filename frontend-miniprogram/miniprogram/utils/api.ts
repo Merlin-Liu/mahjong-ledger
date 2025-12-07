@@ -200,7 +200,7 @@ export const userApi = {
   
   // 通过 code 换取 openid（推荐方式，适用于所有环境）
   getWxOpenIdByCode(code: string) {
-    return request<{ openid: string; session_key: string }>('/api/wx_openid_by_code', {
+    return request<{ openid: string; session_key: string }>('/api/users/wx_openid_by_code', {
       method: 'POST',
       data: { code },
     })
