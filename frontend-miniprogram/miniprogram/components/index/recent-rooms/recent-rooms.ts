@@ -1,5 +1,6 @@
 // recent-rooms.ts
 interface RoomItem {
+  id: number  // 房间 ID，用于 wx:key
   room: {
     id: number
     code: string

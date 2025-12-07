@@ -9,7 +9,7 @@
     <view 
       class="recent-room-item" 
       wx:for="{{rooms}}" 
-      wx:key="room.id"
+      wx:key="id"
       data-code="{{item.room.code}}"
       bindtap="onRoomTap"
     >

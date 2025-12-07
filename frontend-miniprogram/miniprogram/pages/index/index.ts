@@ -32,6 +32,7 @@ Page({
     pendingAction: null as (() => Promise<void>) | null,  // 待执行的操作
     dialogConfirmBtn: { content: '创建', disabled: true },  // 确认按钮配置
     recentRooms: [] as Array<{
+      id: number  // 房间 ID，用于 wx:key
       room: {
         id: number
         code: string
@@ -116,12 +117,33 @@ Page({
       
       // 处理房间数据，添加格式化时间和是否房主标志
       // 确保只显示用户创建或加入过的房间（后端已过滤，这里再次验证）
-      const rooms = roomsData
+      // 按房间 ID 去重，保留最新的记录（按加入时间排序）
+      const roomMap = new Map<number, typeof roomsData[0]>()
+      
+      roomsData
         .filter((item) => {
           // 验证：用户必须是房主，或者有membership记录（表示加入过）
           const isOwner = item.room.owner.id === userId
           const hasMembership = item.membership && item.membership.joinedAt
           return isOwner || hasMembership
+        })
+        .forEach((item) => {
+          const roomId = item.room.id
+          const existing = roomMap.get(roomId)
+          
+          // 如果房间不存在，或者当前记录的加入时间更新，则更新
+          if (!existing || new Date(item.membership.joinedAt) > new Date(existing.membership.joinedAt)) {
+            roomMap.set(roomId, item)
+          }
+        })
+      
+      // 转换为数组，按加入时间排序，取前5个
+      const rooms = Array.from(roomMap.values())
+        .sort((a, b) => {
+          // 按加入时间降序排序（最新的在前）
+          const timeA = new Date(a.membership.joinedAt).getTime()
+          const timeB = new Date(b.membership.joinedAt).getTime()
+          return timeB - timeA
         })
         .slice(0, 5) // 只取前5个
         .map((item) => {
@@ -130,6 +152,7 @@ Page({
           const formattedCreatedAt = this.formatDate(createdAt)
           
           return {
+            id: item.room.id, // 添加唯一 id 用于 wx:key
             room: item.room,
             isOwner,
             formattedCreatedAt,

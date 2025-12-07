@@ -192,10 +192,29 @@ router.get("/:id/rooms", asyncHandler(async (req, res) => {
   });
 
   // 过滤出近N个月内创建或加入的房间
-  const memberships = allMemberships.filter((membership) => {
+  const filteredMemberships = allMemberships.filter((membership) => {
     const roomCreatedAt = new Date(membership.room.createdAt);
     const joinedAt = new Date(membership.joinedAt);
     return roomCreatedAt >= monthsAgo || joinedAt >= monthsAgo;
+  });
+
+  // 按房间 ID 去重，保留每个房间最新的 membership 记录
+  const membershipMap = new Map();
+  filteredMemberships.forEach((membership) => {
+    const roomId = membership.room.id;
+    const existing = membershipMap.get(roomId);
+    
+    // 如果房间不存在，或者当前记录的加入时间更新，则更新
+    if (!existing || new Date(membership.joinedAt) > new Date(existing.joinedAt)) {
+      membershipMap.set(roomId, membership);
+    }
+  });
+
+  // 转换为数组，按加入时间降序排序
+  const memberships = Array.from(membershipMap.values()).sort((a, b) => {
+    const timeA = new Date(a.joinedAt).getTime();
+    const timeB = new Date(b.joinedAt).getTime();
+    return timeB - timeA; // 最新的在前
   });
 
   // 获取每个房间的成员和转账记录

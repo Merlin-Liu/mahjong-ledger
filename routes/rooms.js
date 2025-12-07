@@ -191,31 +191,65 @@ router.post("/:code/join", asyncHandler(async (req, res) => {
     return res.status(400).json(errorResponse("您已经在房间中", 400));
   }
 
-  // 检查之前是否加入过（已离开）
-  const previousMember = await RoomMember.findOne({
-    where: {
-      roomId: room.id,
-      userId,
-    },
-    order: [["createdAt", "DESC"]],
-  });
-
+  // 首次加入或重新加入，都创建新记录以保留历史
   let member;
-  if (previousMember && previousMember.leftAt) {
-    // 重新加入
-    previousMember.leftAt = null;
-    previousMember.joinedAt = new Date();
-    previousMember.username = username?.trim() || user.username;
-    await previousMember.save();
-    member = previousMember;
-  } else {
-    // 首次加入
+  try {
     member = await RoomMember.create({
       roomId: room.id,
       userId,
       username: username?.trim() || user.username,
       joinedAt: new Date(),
     });
+  } catch (createError) {
+    // 如果遇到唯一约束错误（可能数据库中还存在唯一索引），尝试删除索引并重试
+    if (createError.name === 'SequelizeUniqueConstraintError') {
+      // 再次检查用户是否在房间中
+      const checkMember = await RoomMember.findOne({
+        where: {
+          roomId: room.id,
+          userId,
+          leftAt: null,
+        },
+      });
+      
+      if (checkMember) {
+        return res.status(400).json(errorResponse("您已经在房间中", 400));
+      }
+      
+      // 如果用户不在房间中，尝试删除唯一索引并重试
+      try {
+        const { sequelize } = require("../db");
+        const [indexes] = await sequelize.query(`
+          SHOW INDEX FROM \`room_members\` WHERE Key_name = 'unique_room_user';
+        `);
+        
+        if (indexes && indexes.length > 0) {
+          await sequelize.query(`
+            DROP INDEX \`unique_room_user\` ON \`room_members\`;
+          `);
+          console.log("已删除唯一索引 unique_room_user，重试创建成员记录");
+          
+          // 重试创建成员记录
+          member = await RoomMember.create({
+            roomId: room.id,
+            userId,
+            username: username?.trim() || user.username,
+            joinedAt: new Date(),
+          });
+        } else {
+          // 索引不存在，但仍有唯一约束错误，返回错误
+          console.error("创建成员记录时遇到唯一约束错误，但索引不存在:", createError);
+          return res.status(500).json(errorResponse("加入房间失败，请稍后重试", 500));
+        }
+      } catch (dropIndexError) {
+        // 删除索引失败，返回错误
+        console.error("删除唯一索引失败:", dropIndexError);
+        return res.status(500).json(errorResponse("加入房间失败，请稍后重试", 500));
+      }
+    } else {
+      // 其他错误直接抛出
+      throw createError;
+    }
   }
 
   res.json(successResponse({
@@ -245,6 +279,7 @@ router.post("/:code/leave", asyncHandler(async (req, res) => {
     return res.status(404).json(errorResponse("房间不存在", 404));
   }
 
+  // 先查找当前还在房间中的成员
   const member = await RoomMember.findOne({
     where: {
       roomId: room.id,
@@ -254,7 +289,22 @@ router.post("/:code/leave", asyncHandler(async (req, res) => {
   });
 
   if (!member) {
-    return res.status(404).json(errorResponse("您不在房间中", 404));
+    // 检查用户是否曾经加入过这个房间
+    const previousMember = await RoomMember.findOne({
+      where: {
+        roomId: room.id,
+        userId,
+      },
+      order: [["joinedAt", "DESC"]],
+    });
+
+    if (previousMember) {
+      // 用户曾经加入过但已经离开
+      return res.status(400).json(errorResponse("您已经离开房间了", 400));
+    } else {
+      // 用户从未加入过这个房间
+      return res.status(404).json(errorResponse("您不在房间中", 404));
+    }
   }
 
   member.leftAt = new Date();
@@ -477,8 +527,8 @@ router.get("/:code/status", asyncHandler(async (req, res) => {
     return res.status(404).json(errorResponse("房间不存在", 404));
   }
 
-  // 获取成员列表
-  const members = await RoomMember.findAll({
+  // 获取所有成员记录（包括已离开的，用于生成活动记录）
+  const allMembers = await RoomMember.findAll({
     where: { roomId: room.id },
     include: [
       {
@@ -489,6 +539,9 @@ router.get("/:code/status", asyncHandler(async (req, res) => {
     ],
     order: [["joinedAt", "ASC"]],
   });
+
+  // 获取当前还在房间中的成员列表（leftAt 为 null）
+  const members = allMembers.filter(m => m.leftAt === null);
 
   // 获取转账记录
   const transactions = await Transaction.findAll({
@@ -508,10 +561,10 @@ router.get("/:code/status", asyncHandler(async (req, res) => {
     order: [["createdAt", "DESC"]],
   });
 
-  // 获取活动记录
+  // 获取活动记录（使用所有成员记录，包括已离开的）
   const activities = [];
 
-  members.forEach(member => {
+  allMembers.forEach(member => {
     activities.push({
       type: "join",
       userId: member.userId,
@@ -558,7 +611,7 @@ router.get("/:code/status", asyncHandler(async (req, res) => {
         avatarUrl: m.user.avatarUrl,
       },
       joinedAt: m.joinedAt,
-      leftAt: m.leftAt,
+      leftAt: m.leftAt, // 当前成员 leftAt 应该为 null
     })),
     transactions: transactions.map(t => ({
       id: t.id,

@@ -108,8 +108,36 @@ Page({
     this.setData({ userId })
     
     try {
-      // 先尝试获取房间信息，如果失败则尝试加入房间
+      // 先尝试获取房间信息
       await this.loadRoomInfo()
+      
+      // 检查用户是否在成员列表中
+      const roomInfo = this.data.roomInfo
+      const isMember = roomInfo?.members?.some((m: any) => m.userId === userId)
+      
+      // 如果用户不在成员列表中，尝试加入房间
+      if (!isMember) {
+        try {
+          await roomApi.joinRoom(this.data.roomCode, userId)
+          wx.showToast({
+            title: '已加入房间',
+            icon: 'success',
+          })
+          // 重新加载房间信息
+          await this.loadRoomInfo()
+        } catch (joinErr: any) {
+          // 如果已经在房间中（可能是并发请求），忽略错误
+          if (!joinErr.message?.includes('已经在房间中')) {
+            console.error('加入房间失败:', joinErr)
+            wx.showToast({
+              title: joinErr.message || '加入房间失败',
+              icon: 'none',
+            })
+          }
+          // 重新加载房间信息
+          await this.loadRoomInfo()
+        }
+      }
     } catch (err) {
       // 如果获取房间信息失败，尝试加入房间
       try {

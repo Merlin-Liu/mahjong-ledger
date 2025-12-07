@@ -49,10 +49,11 @@ function defineRoomMember(sequelize, Room, User) {
     tableName: "room_members",
     timestamps: true,
     indexes: [
+      // 移除唯一索引，允许多条记录以保留完整的加入/离开历史
+      // 改为普通索引以提高查询性能
       {
-        unique: true,
         fields: ["roomId", "userId"],
-        name: "unique_room_user",
+        name: "idx_room_user",
       },
     ],
   });
