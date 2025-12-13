@@ -2,9 +2,14 @@
 <view class="members-section">
   <view class="section-header">
     <view class="section-title">房间成员</view>
-    <view class="room-code-display" bindtap="onCopyRoomCode">
-      <text class="room-code-label">房间号: {{roomCode}}</text>
-      <text class="copy-icon">📋</text>
+    <view class="room-code-actions">
+      <view class="room-code-display" bindtap="onCopyRoomCode">
+        <text class="room-code-label">房间号: {{roomCode}}</text>
+        <text class="copy-icon">📋</text>
+      </view>
+      <view class="qrcode-btn" bindtap="onGenerateQRCode">
+        <text class="qrcode-icon">📱</text>
+      </view>
     </view>
   </view>
   <scroll-view class="members-scroll" scroll-x="true" enable-flex="true">
@@ -18,5 +23,41 @@
       </view>
     </view>
   </scroll-view>
+</view>
+
+<!-- 隐藏的 canvas 用于生成二维码 -->
+<canvas 
+  id="qrcode-canvas" 
+  canvas-id="qrcode-canvas"
+  style="position: fixed; top: -9999px; left: -9999px; width: 160px; height: 160px;"
+></canvas>
+
+<!-- 二维码弹窗 -->
+<view class="qrcode-dialog-mask" wx:if="{{showQRCodeDialog}}" bindtap="onCloseQRCodeDialog">
+  <view class="qrcode-dialog" catchtap="">
+    <view class="qrcode-dialog-header">
+      <text class="qrcode-dialog-title">房间二维码</text>
+      <text class="qrcode-dialog-close" bindtap="onCloseQRCodeDialog">✕</text>
+    </view>
+    <view class="qrcode-dialog-content">
+      <view class="qrcode-loading" wx:if="{{generatingQRCode}}">
+        <text>生成中...</text>
+      </view>
+      <block wx:else>
+        <image 
+          wx:if="{{qrCodeImageUrl}}"
+          class="qrcode-image" 
+          src="{{qrCodeImageUrl}}" 
+          mode="aspectFit"
+        ></image>
+        <view class="qrcode-tip" wx:if="{{qrCodeImageUrl}}">
+          <text>扫描二维码即可加入房间</text>
+        </view>
+      </block>
+    </view>
+    <view class="qrcode-dialog-footer" wx:if="{{qrCodeImageUrl}}">
+      <button class="qrcode-save-btn" bindtap="onSaveQRCode">保存到相册</button>
+    </view>
+  </view>
 </view>
 
