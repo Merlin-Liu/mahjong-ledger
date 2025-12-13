@@ -79,9 +79,17 @@ Component({
         // 二维码尺寸（更小）
         const qrCodeSize = 160
         
-        // 生成分享链接URL（与房间底部分享按钮一致）
-        // 格式：/pages/room/room?code=房间号
-        const shareUrl = `/pages/room/room?code=${roomCode}`
+        // 获取小程序信息
+        const accountInfo = wx.getAccountInfoSync()
+        const appId = accountInfo.miniProgram.appId
+        
+        // 生成明文 URL Scheme 格式的小程序链接
+        // 格式：weixin://dl/business/?appid=APPID&path=PATH&query=QUERY
+        // 注意：path 不包含 query，query 单独传递
+        const pagePath = 'pages/room/room' // 页面路径，不带 query
+        const query = `code=${roomCode}` // query 参数
+        const miniProgramUrl = `weixin://dl/business/?appid=${appId}&path=${encodeURIComponent(pagePath)}&query=${encodeURIComponent(query)}`
+        
         
         // 配置二维码样式，参考"开房间"按钮的紫色渐变
         // 按钮颜色：linear-gradient(135deg, #667eea 0%, #764ba2 100%)
@@ -101,8 +109,8 @@ Component({
           }
         }
 
-        // 生成二维码图片，使用分享URL而不是房间号，传入组件实例 this 和样式配置
-        const qrCodeImageUrl = await generateQRCodeImage(shareUrl, qrCodeSize, 'qrcode-canvas', this, styleOptions)
+        // 生成二维码图片，使用明文 URL Scheme 格式
+        const qrCodeImageUrl = await generateQRCodeImage(miniProgramUrl, qrCodeSize, 'qrcode-canvas', this, styleOptions)
         this.setData({ 
           qrCodeImageUrl,
           generatingQRCode: false
