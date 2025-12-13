@@ -17,6 +17,7 @@
     is-owner="{{isOwner}}"
     room-code="{{roomCode}}"
     user-id="{{userId}}"
+    room-status="{{roomInfo.status}}"
     bind:leaveroom="onLeaveRoomSuccess"
     bind:closeroom="onCloseRoomSuccess"
   ></actions>

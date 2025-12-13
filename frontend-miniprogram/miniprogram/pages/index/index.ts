@@ -52,9 +52,27 @@ Page({
     isFirstLoad: true,  // 是否是首次加载
   },
 
-  onLoad() {
+  onLoad(options?: { roomCode?: string }) {
     // 只加载用户信息用于显示，不阻止功能使用
     this.loadUserInfo()
+    
+    // 如果从房间页面跳转过来（新用户未登录），保存房间号以便创建用户后自动加入
+    if (options?.roomCode) {
+      this.setData({ roomCodeInput: options.roomCode })
+      // 延迟一下确保 loadUserInfo 已完成
+      setTimeout(() => {
+        // 如果用户已存在，直接尝试加入房间
+        if (this.data.userId) {
+          this.joinRoomByCode()
+        } else {
+          // 用户不存在，弹出创建用户对话框，创建后会自动加入
+          this.checkAndCreateUser(async () => {
+            await this.joinRoomByCode()
+          })
+        }
+      }, 100)
+    }
+    
     // 首次加载时，在 onLoad 中不调用 loadRecentRooms，避免与 onShow 重复调用
     // 房间列表会在 onShow 中加载
   },

@@ -17,6 +17,10 @@ Component({
     userId: {
       type: Number,
       value: 0
+    },
+    roomStatus: {
+      type: String,
+      value: 'active'
     }
   },
 
@@ -31,13 +35,28 @@ Component({
   methods: {
     // 离开房间
     async onLeaveRoom() {
+      const roomStatus = this.properties.roomStatus || this.data.roomStatus
+      
+      // 如果房间已关闭，直接返回主页，不需要调用API和显示确认对话框
+      if (roomStatus === 'closed') {
+        // 通知父组件清除定时器
+        this.triggerEvent('leaveroom', { success: true })
+        
+        // 直接返回主页
+        wx.reLaunch({
+          url: '/pages/index/index'
+        })
+        return
+      }
+
+      // 房间未关闭，显示确认对话框后调用API
       wx.showModal({
         title: '确认离开',
         content: '确定要离开房间吗？',
         success: async (res) => {
           if (res.confirm) {
             try {
-              await roomApi.leaveRoom(this.data.roomCode, this.data.userId)
+              await roomApi.leaveRoom(this.properties.roomCode, this.properties.userId)
               wx.showToast({
                 title: '已离开房间',
                 icon: 'success',

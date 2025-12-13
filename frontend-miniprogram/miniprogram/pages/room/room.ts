@@ -96,9 +96,9 @@ Page({
         icon: 'none',
       })
       setTimeout(() => {
-        // 返回到主页
+        // 返回到主页，带上房间号参数，方便用户创建后自动加入
         wx.reLaunch({
-          url: '/pages/index/index'
+          url: `/pages/index/index?roomCode=${this.data.roomCode}`
         })
       }, 1500)
       return
@@ -218,8 +218,6 @@ Page({
           formattedBalance: `${balance >= 0 ? '+' : ''}${balance.toFixed(2)} 元`,
         }
       })
-
-      console.log('membersWithBalance', membersWithBalance)
       
       // 活动记录传递给组件，由组件自行格式化时间
       this.setData({ 
@@ -291,17 +289,21 @@ Page({
 
   // 分享房间
   onShareAppMessage() {
+    const userInfo = (app.globalData as IAppOption['globalData']).userInfo
+    const nickName = userInfo?.nickName || '好友'
     return {
-      title: `邀请你加入房间 ${this.data.roomCode}`,
+      title: `${nickName}喊你打牌啦，房间号${this.data.roomCode}`,
       path: `/pages/room/room?code=${this.data.roomCode}`,
-      imageUrl: '', // 可以设置分享图片
+      imageUrl: '/images/share/share-card.png', // 使用首页分享卡片图片
     }
   },
 
   // 分享到朋友圈
   onShareTimeline() {
+    const userInfo = (app.globalData as IAppOption['globalData']).userInfo
+    const nickName = userInfo?.nickName || '好友'
     return {
-      title: `邀请你加入房间 ${this.data.roomCode}`,
+      title: `${nickName}喊你打牌啦，房间号${this.data.roomCode}`,
       query: `code=${this.data.roomCode}`,
     }
   },
