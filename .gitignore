@@ -28,3 +28,6 @@ build/
 *.seed
 *.pid.lock
 
+# WeChat MiniProgram
+miniprogram_npm/
+
