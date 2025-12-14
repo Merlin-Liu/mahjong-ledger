@@ -21,7 +21,13 @@ Component({
     },
     roomCode: {
       type: String,
-      value: ''
+      value: '',
+      observer: function(newVal: string, oldVal: string) {
+        // 如果房间号变化，清除缓存的二维码
+        if (newVal !== oldVal && oldVal) {
+          this.setData({ cachedQRCodeUrl: '' })
+        }
+      }
     }
   },
 
@@ -31,7 +37,8 @@ Component({
   data: {
     showQRCodeDialog: false,
     qrCodeImageUrl: '',
-    generatingQRCode: false
+    generatingQRCode: false,
+    cachedQRCodeUrl: '' // 缓存的二维码URL
   },
 
   /**
@@ -73,6 +80,17 @@ Component({
         return
       }
 
+      // 先检查缓存，如果已有缓存的二维码，直接使用
+      if (this.data.cachedQRCodeUrl) {
+        this.setData({ 
+          qrCodeImageUrl: this.data.cachedQRCodeUrl,
+          showQRCodeDialog: true,
+          generatingQRCode: false
+        })
+        return
+      }
+
+      // 没有缓存，开始生成
       this.setData({ generatingQRCode: true, showQRCodeDialog: true })
 
       try {
@@ -84,8 +102,10 @@ Component({
         
         // 生成二维码，宽度设置为 430px（默认值）
         const qrCodeImageUrl = await generateQRCodeImage(pagePath, scene, 430)
+        // 将生成的二维码URL存入缓存
         this.setData({ 
           qrCodeImageUrl,
+          cachedQRCodeUrl: qrCodeImageUrl,
           generatingQRCode: false
         })
       } catch (err: any) {

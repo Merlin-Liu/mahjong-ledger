@@ -1,5 +1,5 @@
 <!--room.wxml-->
-<navigation-bar title="房间" back="{{true}}" color="black" background="#FFF"></navigation-bar>
+<navigation-bar title="{{roomInfo && roomInfo.owner ? roomInfo.owner.username + '的房间' : roomCode ? '房间 ' + roomCode : '房间'}}" back="{{true}}" color="black" background="#FFF"></navigation-bar>
 
 <view class="page-container">
   <!-- 成员列表组件 -->
