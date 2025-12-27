@@ -451,6 +451,172 @@ openid字符串
 }
 ```
 
+### 2. 获取房间统计信息
+
+**GET** `/api/statistics/rooms`
+
+**响应:**
+```json
+{
+  "code": 0,
+  "message": "success",
+  "data": {
+    "totalRooms": 50
+  }
+}
+```
+
+### 3. 获取概览统计信息（包含今日和昨日数据）
+
+**GET** `/api/statistics/overview`
+
+**响应:**
+```json
+{
+  "code": 0,
+  "message": "success",
+  "data": {
+    "totalUsers": 100,
+    "totalRooms": 50,
+    "today": {
+      "newUsers": 5,
+      "newRooms": 3
+    },
+    "yesterday": {
+      "newUsers": 8,
+      "newRooms": 4
+    }
+  }
+}
+```
+
+### 4. 获取今日新增用户列表
+
+**GET** `/api/statistics/users/today`
+
+**响应:**
+```json
+{
+  "code": 0,
+  "message": "success",
+  "data": [
+    {
+      "id": 1,
+      "username": "张三",
+      "avatarUrl": "https://example.com/avatar.jpg",
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    }
+  ]
+}
+```
+
+### 5. 获取昨日新增用户列表
+
+**GET** `/api/statistics/users/yesterday`
+
+**响应:**
+```json
+{
+  "code": 0,
+  "message": "success",
+  "data": [
+    {
+      "id": 1,
+      "username": "张三",
+      "avatarUrl": "https://example.com/avatar.jpg",
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    }
+  ]
+}
+```
+
+### 6. 获取用户列表（全部）
+
+**GET** `/api/statistics/users/list`
+
+**Query参数:**
+- `page` (可选，默认1) - 页码
+- `pageSize` (可选，默认20) - 每页数量
+
+**响应:**
+```json
+{
+  "code": 0,
+  "message": "success",
+  "data": {
+    "list": [
+      {
+        "id": 1,
+        "username": "张三",
+        "avatarUrl": "https://example.com/avatar.jpg",
+        "createdAt": "2024-01-01T00:00:00.000Z"
+      }
+    ],
+    "pagination": {
+      "total": 100,
+      "page": 1,
+      "pageSize": 20,
+      "totalPages": 5
+    }
+  }
+}
+```
+
+### 7. 获取房间列表（全部）
+
+**GET** `/api/statistics/rooms/list`
+
+**Query参数:**
+- `page` (可选，默认1) - 页码
+- `pageSize` (可选，默认20) - 每页数量
+
+**响应:**
+```json
+{
+  "code": 0,
+  "message": "success",
+  "data": {
+    "list": [
+      {
+        "id": 1,
+        "code": "123456",
+        "name": "我的房间",
+        "owner": {
+          "id": 1,
+          "username": "张三",
+          "avatarUrl": "https://example.com/avatar.jpg"
+        },
+        "memberCount": 2,
+        "members": [
+          {
+            "id": 1,
+            "userId": 1,
+            "username": "张三",
+            "avatarUrl": "https://example.com/avatar.jpg",
+            "joinedAt": "2024-01-01T00:00:00.000Z"
+          },
+          {
+            "id": 2,
+            "userId": 2,
+            "username": "李四",
+            "avatarUrl": "https://example.com/avatar2.jpg",
+            "joinedAt": "2024-01-01T00:30:00.000Z"
+          }
+        ],
+        "status": "active",
+        "createdAt": "2024-01-01T00:00:00.000Z"
+      }
+    ],
+    "pagination": {
+      "total": 50,
+      "page": 1,
+      "pageSize": 20,
+      "totalPages": 3
+    }
+  }
+}
+```
+
 ---
 
 ## 错误码说明

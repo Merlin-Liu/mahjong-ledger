@@ -1,92 +1,77 @@
 import { useState, useEffect } from 'react';
+import PasswordAuth from './components/PasswordAuth';
+import Overview from './components/Overview';
+import UserList from './components/UserList';
+import RoomList from './components/RoomList';
 import './App.css';
 
-interface StatisticsData {
-  totalUsers: number;
-}
+// Cookie 操作
+const getCookie = (name: string): string | null => {
+  const nameEQ = name + '=';
+  const ca = document.cookie.split(';');
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+  }
+  return null;
+};
 
 function App() {
-  const [statistics, setStatistics] = useState<StatisticsData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'rooms'>('overview');
 
   useEffect(() => {
-    fetchStatistics();
+    // 检查 cookie 中是否已有验证信息
+    const authToken = getCookie('statistics_auth');
+    if (authToken === 'authenticated') {
+      setIsAuthenticated(true);
+    }
   }, []);
 
-  const fetchStatistics = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await fetch('http://localhost:3000/api/statistics/users');
-      
-      if (!response.ok) {
-        throw new Error(`请求失败: ${response.status}`);
-      }
-
-      const result = await response.json();
-      
-      if (result.code === 0) {
-        setStatistics(result.data);
-      } else {
-        throw new Error(result.message || '获取统计数据失败');
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '未知错误');
-    } finally {
-      setLoading(false);
-    }
+  const handleAuthSuccess = () => {
+    setIsAuthenticated(true);
   };
+
+  if (!isAuthenticated) {
+    return <PasswordAuth onSuccess={handleAuthSuccess} />;
+  }
 
   return (
     <div className="app">
-      <div className="container">
-        <header className="header">
-          <h1>用户统计</h1>
-          <p className="subtitle">麻将记账应用数据统计</p>
-        </header>
+      <main className="main">
+        <div className="tabs">
+          <button
+            className={`tab ${activeTab === 'overview' ? 'active' : ''}`}
+            onClick={() => setActiveTab('overview')}
+          >
+            <span className="tab-icon">📊</span>
+            <span className="tab-text">概览</span>
+          </button>
+          <button
+            className={`tab ${activeTab === 'users' ? 'active' : ''}`}
+            onClick={() => setActiveTab('users')}
+          >
+            <span className="tab-icon">👥</span>
+            <span className="tab-text">用户列表</span>
+          </button>
+          <button
+            className={`tab ${activeTab === 'rooms' ? 'active' : ''}`}
+            onClick={() => setActiveTab('rooms')}
+          >
+            <span className="tab-icon">🏠</span>
+            <span className="tab-text">房间列表</span>
+          </button>
+        </div>
 
-        <main className="main">
-          {loading && (
-            <div className="loading">
-              <div className="spinner"></div>
-              <p>加载中...</p>
-            </div>
-          )}
-
-          {error && (
-            <div className="error">
-              <p>❌ {error}</p>
-              <button onClick={fetchStatistics} className="retry-btn">
-                重试
-              </button>
-            </div>
-          )}
-
-          {!loading && !error && statistics && (
-            <div className="statistics">
-              <div className="stat-card">
-                <div className="stat-icon">👥</div>
-                <div className="stat-content">
-                  <div className="stat-label">总用户数</div>
-                  <div className="stat-value">{statistics.totalUsers.toLocaleString()}</div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {!loading && !error && (
-            <div className="refresh-section">
-              <button onClick={fetchStatistics} className="refresh-btn">
-                🔄 刷新数据
-              </button>
-            </div>
-          )}
-        </main>
-      </div>
+        <div className="list-section">
+          {activeTab === 'overview' && <Overview />}
+          {activeTab === 'users' && <UserList />}
+          {activeTab === 'rooms' && <RoomList />}
+        </div>
+      </main>
     </div>
   );
 }
 
 export default App;
-
