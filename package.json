@@ -5,7 +5,6 @@
   "main": "index.js",
   "scripts": {
     "dev": "node --env-file=.local.env index.js",
-    "init-db": "node --env-file=.local.env init-db.js",
     "pm2:start": "pm2 start ecosystem.config.js --env production",
     "pm2:stop": "pm2 stop ecosystem.config.js",
     "pm2:restart": "pm2 restart ecosystem.config.js --env production",

@@ -13,6 +13,7 @@ export default defineConfig({
     distPath: {
       root: 'dist',
     },
+    assetPrefix: '/mahjong-ledger/data/',
   },
 });
 

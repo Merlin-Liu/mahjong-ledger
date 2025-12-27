@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Room } from '../types';
 import Pagination from './Pagination';
+import API_BASE_URL from '../config/api';
 import './RoomList.css';
 
 const formatDate = (dateString: string) => {
@@ -33,7 +34,7 @@ export default function RoomList() {
       setError(null);
       
       const response = await fetch(
-        `http://localhost:3000/api/statistics/rooms/list?page=${page}&pageSize=${pageSize}`
+        `${API_BASE_URL}/statistics/rooms/list?page=${page}&pageSize=${pageSize}`
       );
       
       if (!response.ok) {

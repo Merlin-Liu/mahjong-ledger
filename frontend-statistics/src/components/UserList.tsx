@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { User } from '../types';
 import Pagination from './Pagination';
+import API_BASE_URL from '../config/api';
 import './UserList.css';
 
 const formatDate = (dateString: string) => {
@@ -33,7 +34,7 @@ export default function UserList() {
       setError(null);
       
       const response = await fetch(
-        `http://localhost:3000/api/statistics/users/list?page=${page}&pageSize=${pageSize}`
+        `${API_BASE_URL}/statistics/users/list?page=${page}&pageSize=${pageSize}`
       );
       
       if (!response.ok) {

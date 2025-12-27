@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { User } from '../types';
+import API_BASE_URL from '../config/api';
 import './Overview.css';
 
 interface OverviewData {
@@ -34,7 +35,7 @@ export default function Overview() {
       setLoading(true);
       setError(null);
       
-      const response = await fetch('http://localhost:3000/api/statistics/overview');
+      const response = await fetch(`${API_BASE_URL}/statistics/overview`);
 
       if (!response.ok) {
         throw new Error('请求失败');
@@ -62,7 +63,7 @@ export default function Overview() {
 
     try {
       setLoadingUsers(true);
-      const response = await fetch('http://localhost:3000/api/statistics/users/today');
+      const response = await fetch(`${API_BASE_URL}/statistics/users/today`);
       
       if (!response.ok) {
         throw new Error('请求失败');
@@ -91,7 +92,7 @@ export default function Overview() {
 
     try {
       setLoadingUsers(true);
-      const response = await fetch('http://localhost:3000/api/statistics/users/yesterday');
+      const response = await fetch(`${API_BASE_URL}/statistics/users/yesterday`);
       
       if (!response.ok) {
         throw new Error('请求失败');
