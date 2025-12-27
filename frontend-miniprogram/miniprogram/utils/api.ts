@@ -1,13 +1,10 @@
 // API工具函数 - 支持本地开发和生产环境
 // ============================================
-// 环境配置：设置为 true 使用本地开发环境，false 使用云托管生产环境
+// 环境配置：设置为 true 使用本地开发环境，false 使用生产环境
 // ============================================
 const IS_LOCAL_DEV = false  // 本地开发环境开关
 const LOCAL_API_BASE_URL = 'http://localhost:80'  // 本地开发API地址
-
-// 云托管配置
-const CLOUD_ENV = 'prod-7grjmb7rc97903a2'  // 云环境ID
-const CLOUD_SERVICE = 'express-xewk'  // 云托管服务名称
+const PROD_API_BASE_URL = 'https://host.guangfu.ink/mahjong-ledger'  // 生产环境API地址
 
 interface ApiResponse<T = any> {
   code: number
@@ -46,12 +43,7 @@ function requestLocal<T = any>(
     const method = options.method || 'GET'
     const url = `${LOCAL_API_BASE_URL}${path}`
     
-    console.log(`[本地API请求] ${method} ${url}`, {
-      method,
-      path,
-      data: options.data,
-      header: options.header,
-    })
+    console.log(`[本地API请求] ${method} ${url}`)
     
     wx.request({
       url,
@@ -77,8 +69,8 @@ function requestLocal<T = any>(
   })
 }
 
-// 生产环境请求函数 - 使用微信云托管 callContainer
-function requestCloud<T = any>(
+// 生产环境请求函数 - 使用 wx.request
+function requestProd<T = any>(
   path: string,
   options: {
     method?: 'GET' | 'POST' | 'PUT' | 'DELETE'
@@ -88,29 +80,19 @@ function requestCloud<T = any>(
 ): Promise<T> {
   return new Promise((resolve, reject) => {
     const method = options.method || 'GET'
+    const url = `${PROD_API_BASE_URL}${path}`
     
-    console.log(`[云托管API请求] ${method} ${path}`, {
-      method,
-      path,
-      data: options.data,
-      header: options.header,
-    })
+    console.log(`[生产环境API请求] ${method} ${url}`)
     
-    // 使用类型断言，因为 callContainer 可能不在类型定义中
-    const cloud = wx.cloud as any
-    cloud.callContainer({
-      config: {
-        env: CLOUD_ENV,
-      },
-      path: path,
+    wx.request({
+      url,
+      method: method as any,
+      data: options.data || {},
       header: {
-        'X-WX-SERVICE': CLOUD_SERVICE,
         'content-type': 'application/json',
         ...options.header,
       },
-      method: method,
-      data: options.data || {},
-      success: (res: any) => {
+      success: (res) => {
         const response = res.data as ApiResponse<T>
         if (response.code === 0) {
           resolve(response.data)
@@ -118,8 +100,8 @@ function requestCloud<T = any>(
           reject(handleApiError(response.message || '请求失败'))
         }
       },
-      fail: (err: any) => {
-        console.error('[云托管API请求失败]', err)
+      fail: (err) => {
+        console.error('[生产环境API请求失败]', err)
         reject(handleApiError(err.errMsg || '请求失败'))
       },
     })
@@ -138,7 +120,7 @@ async function request<T = any>(
   if (IS_LOCAL_DEV) {
     return requestLocal<T>(path, options)
   } else {
-    return requestCloud<T>(path, options)
+    return requestProd<T>(path, options)
   }
 }
 
@@ -193,7 +175,7 @@ export const userApi = {
     }>>(`/api/users/${userId}/rooms?months=${months}`)
   },
 
-  // 获取微信OpenID（从请求头获取，仅云开发环境）
+  // 获取微信OpenID（从请求头获取）
   getWxOpenId() {
     return request<string>('/api/wx_openid')
   },
