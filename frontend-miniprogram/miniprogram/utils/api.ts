@@ -3,7 +3,7 @@
 // 环境配置：设置为 true 使用本地开发环境，false 使用生产环境
 // ============================================
 const IS_LOCAL_DEV = false  // 本地开发环境开关
-const LOCAL_API_BASE_URL = 'http://localhost:80'  // 本地开发API地址
+const LOCAL_API_BASE_URL = 'http://localhost:3000'  // 本地开发API地址
 const PROD_API_BASE_URL = 'https://host.guangfu.ink/mahjong-ledger'  // 生产环境API地址
 
 interface ApiResponse<T = any> {

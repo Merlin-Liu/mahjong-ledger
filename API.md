@@ -434,6 +434,25 @@ openid字符串
 
 ---
 
+## 统计相关 API
+
+### 1. 获取用户统计信息
+
+**GET** `/api/statistics/users`
+
+**响应:**
+```json
+{
+  "code": 0,
+  "message": "success",
+  "data": {
+    "totalUsers": 100
+  }
+}
+```
+
+---
+
 ## 错误码说明
 
 - `0`: 成功
