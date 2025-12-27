@@ -40,7 +40,7 @@ app.use("/api/transactions", transactionsRouter);
 app.use("/api/qrcode", qrcodeRouter);
 
 // 全局错误处理中间件
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
   console.error("Error:", err);
   const statusCode = err.statusCode || 500;
   const message = err.message || "服务器内部错误";
