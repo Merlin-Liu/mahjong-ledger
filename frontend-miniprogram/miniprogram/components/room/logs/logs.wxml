@@ -10,7 +10,7 @@
             <text class="transaction-text"> 向 </text>
             <text class="transaction-to">{{item.toUsername}}</text>
             <text class="transaction-text"> 转账 </text>
-            <text class="transaction-amount">{{item.amount}} 元</text>
+            <text class="transaction-amount">{{item.amount}} 豆</text>
           </block>
           <block wx:else>
             {{item.message}}
