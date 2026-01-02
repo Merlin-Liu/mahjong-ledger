@@ -505,7 +505,7 @@ router.get("/:code/activities", asyncHandler(async (req, res) => {
       toUsername: transaction.toUser.username,
       amount: parseFloat(transaction.amount),
       timestamp: transaction.createdAt,
-      message: `${transaction.fromUser.username} 向 ${transaction.toUser.username} 转账 ${transaction.amount} 元`,
+      message: `${transaction.fromUser.username} 向 ${transaction.toUser.username} 转账 ${transaction.amount} 豆`,
     });
   });
 
@@ -593,7 +593,7 @@ router.get("/:code/status", asyncHandler(async (req, res) => {
       toUsername: transaction.toUser.username,
       amount: parseFloat(transaction.amount),
       timestamp: transaction.createdAt,
-      message: `${transaction.fromUser.username} 向 ${transaction.toUser.username} 转账 ${transaction.amount} 元`,
+      message: `${transaction.fromUser.username} 向 ${transaction.toUser.username} 转账 ${transaction.amount} 豆`,
     });
   });
 

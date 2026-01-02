@@ -232,7 +232,7 @@ Page({
           ...member,
           avatarUrl: member.user?.avatarUrl || null, // 将头像字段提取到顶层
           balance,
-          formattedBalance: `${balance >= 0 ? '+' : ''}${balance.toFixed(2)} 元`,
+          formattedBalance: `${balance >= 0 ? '+' : ''}${balance.toFixed(2)} 豆`,
         }
       })
       
@@ -273,7 +273,7 @@ Page({
           ...member,
           avatarUrl: member.user?.avatarUrl || null, // 将头像字段提取到顶层
           balance,
-          formattedBalance: `${balance >= 0 ? '+' : ''}${balance.toFixed(2)} 元`,
+          formattedBalance: `${balance >= 0 ? '+' : ''}${balance.toFixed(2)} 豆`,
         }
       })
       
@@ -380,6 +380,25 @@ Page({
     if (!transactionAmount || isNaN(amountNum) || amountNum <= 0) {
       wx.showToast({
         title: '请输入有效的转账金额',
+        icon: 'none',
+      })
+      return
+    }
+
+    // 验证金额上限（9999豆）
+    if (amountNum > 9999) {
+      wx.showToast({
+        title: '转账金额不能超过9999豆',
+        icon: 'none',
+      })
+      return
+    }
+
+    // 验证小数位数（最多2位）
+    const decimalPart = transactionAmount.toString().split('.')[1]
+    if (decimalPart && decimalPart.length > 2) {
+      wx.showToast({
+        title: '金额最多保留两位小数',
         icon: 'none',
       })
       return

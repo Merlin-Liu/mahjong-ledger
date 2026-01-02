@@ -15,7 +15,7 @@
     </view>
     <view class="transaction-form">
       <view class="transaction-form-item">
-        <text class="transaction-label">转账金额（元）</text>
+        <text class="transaction-label">转账金额（豆）</text>
         <input
           id="amount-input"
           class="transaction-input"

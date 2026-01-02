@@ -34,10 +34,40 @@ Component({
    */
   methods: {
     onAmountInput(e: any) {
+      let value = e.detail.value
+      
+      // 移除非数字和小数点的字符
+      value = value.replace(/[^\d.]/g, '')
+      
+      // 限制只能有一个小数点
+      const parts = value.split('.')
+      if (parts.length > 2) {
+        value = parts[0] + '.' + parts.slice(1).join('')
+      }
+      
+      // 重新分割以获取最新的 parts
+      const updatedParts = value.split('.')
+      
+      // 限制小数点后最多2位
+      if (updatedParts.length === 2 && updatedParts[1].length > 2) {
+        value = updatedParts[0] + '.' + updatedParts[1].substring(0, 2)
+      }
+      
+      // 如果整数部分超过4位，截断为9999
+      if (updatedParts[0] && updatedParts[0].length > 4) {
+        value = '9999'
+      }
+      
+      // 限制最大值为9999（双重校验）
+      const numValue = parseFloat(value)
+      if (!isNaN(numValue) && numValue > 9999) {
+        value = '9999'
+      }
+      
       this.setData({
-        transactionAmount: e.detail.value
+        transactionAmount: value
       })
-      this.triggerEvent('amountinput', { value: e.detail.value })
+      this.triggerEvent('amountinput', { value })
     },
 
     onConfirm() {

@@ -103,7 +103,19 @@ Page({
   formatDate(date: Date): string {
     const now = new Date()
     const diff = now.getTime() - date.getTime()
+    
+    // 处理负数情况（未来时间，可能是时区问题导致的）
+    // 如果时间差小于0，说明是未来时间，统一显示为"今天"
+    if (diff < 0) {
+      return '今天'
+    }
+    
     const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+    
+    // 再次检查，防止负数
+    if (days < 0) {
+      return '今天'
+    }
     
     if (days === 0) {
       return '今天'

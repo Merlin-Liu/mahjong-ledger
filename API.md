@@ -360,7 +360,7 @@ openid字符串
       "toUsername": "李四",
       "amount": 100.50,
       "timestamp": "2024-01-01T01:00:00.000Z",
-      "message": "张三 向 李四 转账 100.5 元"
+      "message": "张三 向 李四 转账 100.5 豆"
     },
     {
       "type": "leave",

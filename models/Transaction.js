@@ -41,7 +41,7 @@ function defineTransaction(sequelize, Room, User) {
     amount: {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
-      comment: "转账金额（元）",
+      comment: "转账金额（豆）",
     },
     description: {
       type: DataTypes.STRING(255),
