@@ -232,7 +232,7 @@ Page({
           ...member,
           avatarUrl: member.user?.avatarUrl || null, // 将头像字段提取到顶层
           balance,
-          formattedBalance: `${balance >= 0 ? '+' : ''}${balance.toFixed(2)} 豆`,
+          formattedBalance: `${balance >= 0 ? '+' : ''}${balance.toFixed(2)} 分`,
         }
       })
       
@@ -273,7 +273,7 @@ Page({
           ...member,
           avatarUrl: member.user?.avatarUrl || null, // 将头像字段提取到顶层
           balance,
-          formattedBalance: `${balance >= 0 ? '+' : ''}${balance.toFixed(2)} 豆`,
+          formattedBalance: `${balance >= 0 ? '+' : ''}${balance.toFixed(2)} 分`,
         }
       })
       
@@ -385,10 +385,10 @@ Page({
       return
     }
 
-    // 验证金额上限（9999豆）
+    // 验证金额上限（9999分）
     if (amountNum > 9999) {
       wx.showToast({
-        title: '转账金额不能超过9999豆',
+        title: '转账金额不能超过9999分',
         icon: 'none',
       })
       return
