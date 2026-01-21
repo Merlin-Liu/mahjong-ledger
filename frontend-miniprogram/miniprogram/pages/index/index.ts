@@ -730,7 +730,7 @@ Page({
   // 分享小程序给好友
   onShareAppMessage() {
     return {
-      title: '打牌记账 - 一起来记账吧！',
+      title: '牌桌管家 - 一起打牌，轻松记分！',
       path: '/pages/index/index',
       imageUrl: '/images/share/share-card.png', // 自定义分享图片
     }
