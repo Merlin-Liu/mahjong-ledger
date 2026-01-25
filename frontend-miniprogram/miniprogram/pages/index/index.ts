@@ -182,7 +182,7 @@ Page({
           const timeB = new Date(b.membership.joinedAt).getTime()
           return timeB - timeA
         })
-        .slice(0, 5) // 只取前5个
+        .slice(0, 4) // 只取前4个
         .map((item) => {
           const isOwner = item.room.owner.id === userId
           const createdAt = new Date(item.room.createdAt)
@@ -284,6 +284,19 @@ Page({
         url: `/pages/room/room?code=${roomCode}`,
       })
     }
+  },
+
+  // 点击用户信息卡片
+  onUserInfoCardTap() {
+    // 如果未登录，调起登录弹窗
+    if (!this.data.userId || this.data.userId === 0) {
+      this.checkAndCreateUser(async () => {
+        // 登录成功后刷新用户信息
+        this.loadUserInfo()
+        this.loadRecentRooms()
+      })
+    }
+    // 如果已登录，可以在这里添加其他操作（如跳转到个人中心等）
   },
 
   // 检查用户信息，如果没有则弹出对话框
@@ -483,15 +496,6 @@ Page({
     
     // 使用微信 OpenID（或降级方案）作为 wxOpenId 传给后端
     const userData = await userApi.createOrGetUser(wxOpenId || '', username, avatarUrl)
-    
-    // 如果是已存在的用户（更新操作），显示提示
-    if (userData.isExistingUser) {
-      wx.showToast({
-        title: '欢迎回来，已更新您的信息',
-        icon: 'success',
-        duration: 2000,
-      })
-    }
     
     const userInfo: IAppOption['globalData']['userInfo'] = {
       id: userData.id,
