@@ -780,5 +780,13 @@ Page({
       imageUrl: '/images/share/share-card.png', // 自定义分享图片
     }
   },
+
+  onShareTimeline() {
+    return {
+      title: '牌桌管家 - 一起打牌，轻松记分！',
+      path: '/pages/index/index',
+      imageUrl: '/images/share/share-card.png', // 自定义分享图片
+    }
+  },
 })
 
