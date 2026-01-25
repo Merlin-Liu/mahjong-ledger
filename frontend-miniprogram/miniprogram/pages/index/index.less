@@ -1,9 +1,11 @@
 /**index.less**/
+@import '../../config/theme.less';
+
 page {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(180deg, #f8f9ff 0%, #f5f5f5 100%);
+  background: linear-gradient(180deg, @primary-lighter 0%, @bg-page 100%);
 }
 
 .scrollarea {
@@ -13,43 +15,110 @@ page {
 
 .container {
   width: 100%;
-  padding: 10rpx 10rpx 40rpx 10rpx;
+  padding: 16rpx 20rpx 40rpx 20rpx;
   min-height: 100%;
   display: flex;
   flex-direction: column;
   gap: 16rpx;
+  box-sizing: border-box;
 }
 
-/* 用户信息卡片 - 占满屏幕宽度 */
-.userinfo-card {
+/* Flex 布局容器 */
+.grid-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20rpx;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Flex 卡片基础样式 - 统一大小（使用固定高度，参考原按钮尺寸） */
+.grid-card {
+  flex: 0 0 calc(50% - 10rpx);
+  height: 170rpx;
+  min-height: 170rpx;
+  position: relative;
+  box-sizing: border-box;
+  border-radius: @radius-large;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 用户信息卡片 - 网格布局 */
+.grid-card.userinfo-card {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
-  border-radius: 0;
-  padding: 24rpx 30rpx;
-  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.06);
-  border: none;
-  margin: 0 -20rpx;
-  width: calc(100% + 40rpx);
+  justify-content: center;
+  background: linear-gradient(135deg, #FFFFFF 0%, #F8FDFB 50%, #E8F8F4 100%);
+  box-shadow: 0 4rpx 12rpx rgba(45, 159, 122, 0.12), 0 2rpx 6rpx rgba(45, 159, 122, 0.08);
+  border: 2rpx solid rgba(78, 201, 168, 0.2);
+  padding: 16rpx 12rpx;
+  position: relative;
   box-sizing: border-box;
+  overflow: visible;
+}
+
+.grid-card.userinfo-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at top right, rgba(78, 201, 168, 0.08) 0%, transparent 60%);
+  pointer-events: none;
+  border-radius: @radius-large;
 }
 
 .userinfo-avatar {
   overflow: hidden;
-  width: 100rpx;
-  height: 100rpx;
-  margin-bottom: 12rpx;
+  width: 70rpx;
+  height: 70rpx;
+  margin-bottom: 10rpx;
   border-radius: 50%;
-  border: 2rpx solid #e8e8e8;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.08);
+  border: 3rpx solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 2rpx 8rpx rgba(45, 159, 122, 0.2), 0 0 0 2rpx rgba(78, 201, 168, 0.15);
+  background: @bg-card;
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  display: block;
+  transition: all 0.3s ease;
+  animation: avatarGlow 2s ease-in-out infinite;
+}
+
+@keyframes avatarGlow {
+  0%, 100% {
+    box-shadow: 0 2rpx 8rpx rgba(45, 159, 122, 0.2), 0 0 0 2rpx rgba(78, 201, 168, 0.15);
+  }
+  50% {
+    box-shadow: 0 2rpx 12rpx rgba(45, 159, 122, 0.3), 0 0 0 3rpx rgba(78, 201, 168, 0.25);
+  }
 }
 
 .userinfo-nickname {
-  font-size: 32rpx;
+  font-size: 26rpx;
   font-weight: 600;
-  color: #333;
+  color: @text-primary;
   letter-spacing: 0.5rpx;
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  line-height: 1.4;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+  display: block;
+  width: 100%;
+  padding: 0 4rpx;
+  box-sizing: border-box;
+  background: linear-gradient(135deg, @text-primary 0%, @primary-dark 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .avatar-wrapper {
@@ -59,8 +128,8 @@ page {
   border-radius: 50%;
   margin-bottom: 24rpx;
   overflow: hidden;
-  background: linear-gradient(135deg, #e8e8e8 0%, #d0d0d0 100%);
-  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, @border-light 0%, @border-main 100%);
+  box-shadow: @shadow-main;
 }
 
 .avatar {
@@ -74,8 +143,8 @@ page {
   width: 100%;
   padding: 24rpx 0;
   box-sizing: border-box;
-  border-top: 1rpx solid rgba(0, 0, 0, 0.08);
-  color: #333;
+  border-top: 1rpx solid @border-light;
+  color: @text-primary;
   align-items: center;
   margin-top: 20rpx;
 }
@@ -83,14 +152,14 @@ page {
 .nickname-label {
   width: 100rpx;
   font-size: 30rpx;
-  color: #666;
+  color: @text-secondary;
   font-weight: 500;
 }
 
 .nickname-input {
   flex: 1;
   font-size: 30rpx;
-  color: #333;
+  color: @text-primary;
 }
 
 .tip-text {
@@ -98,7 +167,7 @@ page {
   margin-top: 20rpx;
   text-align: center;
   font-size: 26rpx;
-  color: #999;
+  color: @text-hint;
 }
 
 /* 功能按钮区域 */
@@ -107,6 +176,7 @@ page {
   display: flex;
   flex-direction: column;
   gap: 14rpx;
+  margin-top: 0;
 }
 
 /* 按钮行 - 并排显示 */
@@ -130,13 +200,14 @@ page {
   box-sizing: border-box;
 }
 
+
 /* 统一的功能卡片样式 */
 .action-card {
-  background: #ffffff;
-  border-radius: 16rpx;
+  background: @bg-card;
+  border-radius: @radius-large;
   padding: 20rpx 24rpx;
-  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.06);
-  border: 1rpx solid rgba(0, 0, 0, 0.05);
+  box-shadow: @shadow-light;
+  border: 1rpx solid @border-light;
 }
 
 .card-header {
@@ -146,24 +217,21 @@ page {
 .card-title {
   font-size: 28rpx;
   font-weight: 600;
-  color: #333;
+  color: @text-primary;
   letter-spacing: 0.5rpx;
 }
 
-/* 按钮样式统一 */
-.btn-action {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* 按钮样式统一 - 网格布局 */
+.grid-card.btn-action {
   padding: 0;
-  border-radius: 16rpx;
+  border-radius: @radius-large;
   border: none;
-  overflow: hidden;
-  transition: all 0.3s ease;
-  min-height: 120rpx;
-  max-height: 200rpx;
-  height: auto;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(0);
+}
+
+.grid-card.btn-action:not([disabled]):active {
+  transform: translateY(2rpx) scale(0.98);
 }
 
 .btn-action::after {
@@ -172,58 +240,167 @@ page {
 
 .btn-action[disabled] {
   opacity: 0.6;
+  filter: grayscale(0.3);
 }
 
-.btn-content {
+/* 网格卡片中的按钮内容 */
+.grid-card.btn-action .btn-content {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 20rpx 16rpx;
   width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 /* 主要按钮 - 开房间（最常用） */
 .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: #fff;
-  box-shadow: 0 8rpx 24rpx rgba(102, 126, 234, 0.3);
+  background: linear-gradient(135deg, #3DB892 0%, @primary-main 50%, @primary-dark 100%);
+  color: @text-white;
+  box-shadow: 0 6rpx 20rpx rgba(45, 159, 122, 0.35), 0 3rpx 10rpx rgba(45, 159, 122, 0.25), inset 0 1rpx 0 rgba(255, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s ease;
+}
+
+.btn-primary:active::before {
+  left: 100%;
 }
 
 .btn-primary:active {
-  transform: scale(0.98);
-  box-shadow: 0 4rpx 16rpx rgba(102, 126, 234, 0.25);
+  box-shadow: 0 3rpx 12rpx rgba(45, 159, 122, 0.3), 0 2rpx 6rpx rgba(45, 159, 122, 0.2);
 }
 
-/* 次要按钮 - 扫码 */
+/* 次要按钮 - 扫码（使用边框样式，更清晰） */
 .btn-secondary {
-  background: linear-gradient(135deg, #f0f2f5 0%, #e1e4e8 100%);
-  color: #495057;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
-  border: 1rpx solid rgba(0, 0, 0, 0.08);
+  background: linear-gradient(135deg, @bg-card 0%, #FAFDFC 100%);
+  color: @text-primary;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.08), 0 2rpx 6rpx rgba(0, 0, 0, 0.05);
+  border: 2rpx solid rgba(78, 201, 168, 0.3);
+  position: relative;
+}
+
+.btn-secondary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(78, 201, 168, 0.05) 0%, transparent 100%);
+  border-radius: @radius-large;
+  pointer-events: none;
 }
 
 .btn-secondary:active {
-  transform: scale(0.98);
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.06);
+  background: linear-gradient(135deg, #F0F9F6 0%, #E8F8F4 100%);
+  border-color: @primary-main;
+  box-shadow: 0 2rpx 8rpx rgba(45, 159, 122, 0.15), 0 1rpx 4rpx rgba(45, 159, 122, 0.1);
 }
 
-/* 分享按钮 */
+/* 分享按钮（使用更柔和的渐变，与主按钮区分） */
 .btn-share {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  color: #fff;
-  box-shadow: 0 8rpx 24rpx rgba(245, 87, 108, 0.3);
+  background: linear-gradient(135deg, #5FD4B5 0%, @primary-light 50%, @primary-main 100%);
+  color: @text-white;
+  box-shadow: 0 5rpx 18rpx rgba(78, 201, 168, 0.3), 0 2rpx 8rpx rgba(78, 201, 168, 0.2), inset 0 1rpx 0 rgba(255, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-share::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+  transition: left 0.5s ease;
+}
+
+.btn-share:active::before {
+  left: 100%;
 }
 
 .btn-share:active {
-  transform: scale(0.98);
-  box-shadow: 0 4rpx 16rpx rgba(245, 87, 108, 0.25);
+  box-shadow: 0 3rpx 10rpx rgba(78, 201, 168, 0.25), 0 1rpx 5rpx rgba(78, 201, 168, 0.15);
 }
 
 .btn-share .btn-text {
+  text-shadow: 0 1rpx 3rpx rgba(0, 0, 0, 0.15);
+}
+
+/* 网格卡片中的图标和文字 */
+.grid-card .btn-icon {
+  font-size: 56rpx;
+  margin-bottom: 12rpx;
+  filter: drop-shadow(0 2rpx 6rpx rgba(0, 0, 0, 0.15));
+  line-height: 1;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-block;
+  animation: iconFloat 3s ease-in-out infinite;
+}
+
+@keyframes iconFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4rpx);
+  }
+}
+
+.grid-card.btn-action:active .btn-icon {
+  animation: none;
+  transform: scale(0.95);
+}
+
+.grid-card .btn-text {
+  font-size: 26rpx;
+  font-weight: 600;
+  letter-spacing: 0.5rpx;
+  margin-bottom: 0;
+  text-align: center;
+  line-height: 1.3;
+  transition: transform 0.2s ease;
+}
+
+.grid-card.btn-action:active .btn-text {
+  transform: scale(0.98);
+}
+
+.grid-card.btn-primary .btn-text {
   text-shadow: 0 1rpx 2rpx rgba(0, 0, 0, 0.1);
 }
 
+.grid-card.btn-secondary .btn-text {
+  color: @text-primary;
+}
+
+.grid-card.btn-secondary .btn-icon {
+  opacity: 0.9;
+}
+
+.grid-card.btn-share .btn-text {
+  text-shadow: 0 1rpx 2rpx rgba(0, 0, 0, 0.1);
+}
+
+/* 保留原有按钮样式（用于非网格按钮） */
 .btn-icon {
   font-size: 48rpx;
   margin-bottom: 4rpx;
@@ -240,6 +417,14 @@ page {
 
 .btn-primary .btn-text {
   text-shadow: 0 1rpx 2rpx rgba(0, 0, 0, 0.1);
+}
+
+.btn-secondary .btn-text {
+  color: @text-primary;
+}
+
+.btn-secondary .btn-icon {
+  opacity: 0.9;
 }
 
 .btn-desc {
@@ -260,19 +445,19 @@ page {
   flex: 1;
   height: 72rpx;
   padding: 0 20rpx;
-  background: #f8f9fa;
-  border-radius: 12rpx;
+  background: @border-light;
+  border-radius: @radius-medium;
   font-size: 28rpx;
-  color: #333;
+  color: @text-primary;
   border: 2rpx solid transparent;
   transition: all 0.3s ease;
   box-sizing: border-box;
 }
 
 .room-code-input:focus {
-  background: #fff;
-  border-color: #667eea;
-  box-shadow: 0 0 0 4rpx rgba(102, 126, 234, 0.1);
+  background: @bg-card;
+  border-color: @primary-main;
+  box-shadow: 0 0 0 4rpx rgba(26, 122, 94, 0.1);
 }
 
 .btn-join {
@@ -280,26 +465,26 @@ page {
   min-width: 160rpx;
   height: 72rpx;
   line-height: 72rpx;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: #fff;
-  border-radius: 12rpx;
+  background: linear-gradient(135deg, @primary-main 0%, @primary-dark 100%);
+  color: @text-white;
+  border-radius: @radius-medium;
   font-size: 26rpx;
   font-weight: 600;
   padding: 0;
   border: none;
-  box-shadow: 0 2rpx 8rpx rgba(102, 126, 234, 0.25);
+  box-shadow: 0 2rpx 10rpx rgba(45, 159, 122, 0.3), 0 1rpx 5rpx rgba(45, 159, 122, 0.2);
   transition: all 0.3s ease;
   flex-shrink: 0;
 }
 
 .btn-join:active {
   transform: scale(0.95);
-  box-shadow: 0 2rpx 8rpx rgba(102, 126, 234, 0.2);
+  box-shadow: 0 1rpx 8rpx rgba(45, 159, 122, 0.25), 0 1rpx 4rpx rgba(45, 159, 122, 0.15);
 }
 
 .btn-join[disabled] {
-  background: #e9ecef;
-  color: #adb5bd;
+  background: @border-main;
+  color: @text-disabled;
   box-shadow: none;
 }
 
@@ -318,7 +503,7 @@ page {
 
 .dialog-label {
   font-size: 28rpx;
-  color: #333;
+  color: @text-primary;
   margin-bottom: 24rpx;
   font-weight: 600;
   letter-spacing: 1rpx;
@@ -329,11 +514,11 @@ page {
   padding: 0;
   width: 140rpx !important;
   height: 140rpx !important;
-  border-radius: 50%;
+  border-radius: @radius-round;
   overflow: visible;
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.1);
-  border: 4rpx solid #fff;
+  background: linear-gradient(135deg, @border-light 0%, @border-main 100%);
+  box-shadow: @shadow-main;
+  border: 4rpx solid @bg-card;
   transition: all 0.3s ease;
 }
 
@@ -358,13 +543,13 @@ page {
   right: 0;
   width: 44rpx;
   height: 44rpx;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 50%;
+  background: linear-gradient(135deg, @primary-main 0%, @primary-dark 100%);
+  border-radius: @radius-round;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 3rpx solid #fff;
-  box-shadow: 0 2rpx 8rpx rgba(102, 126, 234, 0.3);
+  border: 3rpx solid @bg-card;
+  box-shadow: 0 2rpx 8rpx rgba(45, 159, 122, 0.25), 0 1rpx 4rpx rgba(45, 159, 122, 0.15);
 }
 
 .dialog-avatar-icon {
@@ -375,7 +560,7 @@ page {
 .dialog-avatar-tip {
   margin-top: 16rpx;
   font-size: 24rpx;
-  color: #999;
+  color: @text-hint;
 }
 
 /* 昵称输入区域 */
@@ -394,18 +579,18 @@ page {
   width: 100%;
   height: 88rpx;
   padding: 0 28rpx;
-  background: #f8f9fa;
-  border-radius: 16rpx;
+  background: @border-light;
+  border-radius: @radius-large;
   font-size: 30rpx;
-  color: #333;
+  color: @text-primary;
   border: 2rpx solid transparent;
   box-sizing: border-box;
   transition: all 0.3s ease;
 }
 
 .dialog-nickname-input:focus {
-  background: #fff;
-  border-color: #667eea;
-  box-shadow: 0 0 0 4rpx rgba(102, 126, 234, 0.1);
+  background: @bg-card;
+  border-color: @primary-main;
+  box-shadow: 0 0 0 4rpx rgba(26, 122, 94, 0.1);
 }
 

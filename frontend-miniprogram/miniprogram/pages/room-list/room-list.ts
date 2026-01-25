@@ -33,8 +33,15 @@ interface RoomItem {
     joinedAt: string
     leftAt: string | null
   }
+  members?: Array<{
+    userId: number
+    username: string
+    joinedAt: string
+    leftAt: string | null
+  }>
   isOwner: boolean
   formattedCreatedAt: string
+  memberInfo: string
 }
 
 Page({
@@ -81,10 +88,39 @@ Page({
         const createdAt = new Date(item.room.createdAt)
         const formattedCreatedAt = this.formatDate(createdAt)
         
+        // 计算当前在房间中的成员数量（leftAt 为 null 的成员）
+        const activeMembers = item.members ? item.members.filter(m => !m.leftAt) : []
+        const memberCount = activeMembers.length
+        
+        // 生成成员信息字符串：最多显示3个昵称，超过则显示"等X人"
+        let memberInfo = ''
+        if (memberCount === 0) {
+          memberInfo = '0人'
+        } else {
+          const displayMembers = activeMembers.slice(0, 3)
+          // 每个成员名字最大长度限制（中文字符，约4个汉字）
+          const maxNameLength = 10
+          const memberNames = displayMembers.map(m => {
+            const name = m.username || ''
+            if (name.length > maxNameLength) {
+              return name.substring(0, maxNameLength) + '...'
+            }
+            return name
+          }).join('、')
+          if (memberCount <= 3) {
+            // 3人以内：显示所有昵称 + 人数
+            memberInfo = `${memberNames} ${memberCount} 人`
+          } else {
+            // 超过3人：显示前3个昵称 + "等X人"
+            memberInfo = `${memberNames} 等${memberCount}人`
+          }
+        }
+        
         return {
           ...item,
           isOwner,
           formattedCreatedAt,
+          memberInfo,
         }
       })
 
@@ -99,7 +135,7 @@ Page({
     }
   },
 
-  // 格式化日期
+  // 格式化日期（精确到分钟）
   formatDate(date: Date): string {
     const now = new Date()
     const diff = now.getTime() - date.getTime()
@@ -107,28 +143,36 @@ Page({
     // 处理负数情况（未来时间，可能是时区问题导致的）
     // 如果时间差小于0，说明是未来时间，统一显示为"今天"
     if (diff < 0) {
-      return '今天'
+      const hours = date.getHours().toString().padStart(2, '0')
+      const minutes = date.getMinutes().toString().padStart(2, '0')
+      return `今天 ${hours}:${minutes}`
     }
     
     const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+    const hours = date.getHours().toString().padStart(2, '0')
+    const minutes = date.getMinutes().toString().padStart(2, '0')
     
     // 再次检查，防止负数
     if (days < 0) {
-      return '今天'
+      return `今天 ${hours}:${minutes}`
     }
     
     if (days === 0) {
-      return '今天'
+      return `今天 ${hours}:${minutes}`
     } else if (days === 1) {
-      return '昨天'
+      return `昨天 ${hours}:${minutes}`
     } else if (days < 7) {
-      return `${days}天前`
+      return `${days}天前 ${hours}:${minutes}`
     } else if (days < 30) {
       const weeks = Math.floor(days / 7)
-      return `${weeks}周前`
+      const month = (date.getMonth() + 1).toString().padStart(2, '0')
+      const day = date.getDate().toString().padStart(2, '0')
+      return `${month}-${day} ${hours}:${minutes}`
     } else {
-      const months = Math.floor(days / 30)
-      return `${months}个月前`
+      const year = date.getFullYear()
+      const month = (date.getMonth() + 1).toString().padStart(2, '0')
+      const day = date.getDate().toString().padStart(2, '0')
+      return `${year}-${month}-${day} ${hours}:${minutes}`
     }
   },
 

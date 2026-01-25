@@ -350,10 +350,10 @@ Page({
   onMemberTap(e: any) {
     const member = e.detail.member as Member
     
-    // 不能向自己转账
+    // 不能向自己转分
     if (member.userId === this.data.userId) {
       wx.showToast({
-        title: '不能向自己转账',
+        title: '不能向自己转分',
         icon: 'none',
       })
       return
@@ -365,7 +365,7 @@ Page({
     })
   },
 
-  // 确认转账
+  // 确认转分
   async onTransactionConfirm(e: any) {
     const { amount } = e.detail
     const { targetMember, roomCode, userId } = this.data
@@ -379,7 +379,7 @@ Page({
     const amountNum = parseFloat(transactionAmount)
     if (!transactionAmount || isNaN(amountNum) || amountNum <= 0) {
       wx.showToast({
-        title: '请输入有效的转账金额',
+        title: '请输入有效的转分金额',
         icon: 'none',
       })
       return
@@ -388,7 +388,7 @@ Page({
     // 验证金额上限（9999分）
     if (amountNum > 9999) {
       wx.showToast({
-        title: '转账金额不能超过9999分',
+        title: '转分金额不能超过9999分',
         icon: 'none',
       })
       return
@@ -414,7 +414,7 @@ Page({
       )
 
       wx.showToast({
-        title: '转账成功',
+        title: '转分成功',
         icon: 'success',
       })
 
@@ -427,15 +427,15 @@ Page({
       // 重新加载房间状态
       await this.loadRoomStatus()
     } catch (err: any) {
-      console.error('转账失败:', err)
+      console.error('转分失败:', err)
       wx.showToast({
-        title: err.message || '转账失败',
+        title: err.message || '转分失败',
         icon: 'none',
       })
     }
   },
 
-  // 取消转账
+  // 取消转分
   onTransactionCancel() {
     this.setData({
       showTransactionDialog: false,

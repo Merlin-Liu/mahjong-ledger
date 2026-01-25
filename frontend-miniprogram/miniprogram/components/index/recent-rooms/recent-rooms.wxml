@@ -13,33 +13,43 @@
       data-code="{{item.room.code}}"
       bindtap="onRoomTap"
     >
-      <view class="room-item-header">
-        <text class="room-item-code">房间号: {{item.room.code}}</text>
-        <view class="room-item-badges">
-          <view class="room-item-status {{item.room.status === 'active' ? 'status-active' : 'status-closed'}}">
-            {{item.room.status === 'active' ? '开启中' : '关闭'}}
+      <view class="room-item-content">
+        <view class="room-item-left">
+          <view class="room-item-info">
+            <text class="room-item-owner-label">房主: </text>
+            <text class="room-item-owner-name">{{item.room.owner.username}}</text>
           </view>
-          <view class="room-item-owner-badge" wx:if="{{item.isOwner}}">我的</view>
+          <view class="room-item-bottom">
+            <text class="room-item-member-info">{{item.memberInfo}}</text>
+            <view class="room-item-owner-badge" wx:if="{{item.isOwner}}">我的</view>
+          </view>
+        </view>
+        <view class="room-item-right">
+          <text class="room-item-code">
+            <text class="room-item-code-label">房间号: </text>
+            <text class="room-item-code-value">{{item.room.code}}</text>
+          </text>
+          <text class="room-item-time">{{item.formattedCreatedAt}}</text>
         </view>
       </view>
-      <view class="room-item-footer">
-        <text class="room-item-time">{{item.formattedCreatedAt}}</text>
-        <text class="room-item-owner">房主: {{item.room.owner.username}}</text>
-      </view>
+    </view>
+
+    <!-- 查看更多按钮 -->
+    <view class="view-more-wrapper" wx:if="{{rooms.length > 0}}">
+      <button class="btn-view-more" bindtap="onViewMore">
+        <text>查看更多房间</text>
+        <text class="btn-view-more-arrow">→</text>
+      </button>
     </view>
   </view>
   
   <!-- 空状态 -->
   <view class="recent-rooms-empty" wx:else>
-    <text class="empty-text">暂无房间记录</text>
-  </view>
-  
-  <!-- 查看更多按钮 -->
-  <view class="view-more-wrapper" wx:if="{{rooms.length > 0}}">
-    <button class="btn-view-more" bindtap="onViewMore">
-      <text>查看更多</text>
-      <text class="btn-view-more-arrow">→</text>
-    </button>
+    <view class="empty-icon-wrapper">
+      <text class="empty-icon">🀄</text>
+    </view>
+    <text class="empty-title">还没有房间记录</text>
+    <text class="empty-tip">快去开一个房间，开始记录吧！</text>
   </view>
 </view>
 

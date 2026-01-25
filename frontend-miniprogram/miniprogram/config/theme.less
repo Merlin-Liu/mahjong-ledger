@@ -4,48 +4,48 @@
  */
 
 // ============ 主色系 ============
-@primary-main: #1A7A5E;       // 深绿色（Logo 背景色）
-@primary-light: #5EC9A8;      // 中绿色
-@primary-lighter: #7FDDB8;    // 浅绿色（分享卡片背景）
-@primary-dark: #0E6647;       // 更深的绿色
+@primary-main: #2D9F7A;       // 主绿色（更亮更现代）
+@primary-light: #4EC9A8;      // 中绿色（更柔和）
+@primary-lighter: #E8F8F4;    // 极浅绿色（背景用）
+@primary-dark: #1A7A5E;       // 深绿色（保持品牌色）
 
 // ============ 辅助色系 ============
 @secondary-white: #FFFFFF;
-@secondary-black: #000000;
-@gray-light: #CCCCCC;
-@gray-main: #999999;
-@gray-dark: #666666;
+@secondary-black: #1A1A1A;   // 更柔和的黑色
+@gray-light: #E5E5E5;         // 更柔和的浅灰
+@gray-main: #8E8E93;          // iOS 风格的中灰
+@gray-dark: #636366;          // 更柔和的深灰
 
 // ============ 功能色 ============
-@success-color: #0E9B68;      // 成功色（对勾的绿色）
-@warning-color: #FF9800;      // 警告色
-@danger-color: #F44336;       // 危险色
-@info-color: #2196F3;         // 信息色
-@accent-color: #D32F2F;       // 强调色（麻将"中"字红色）
+@success-color: #2D9F7A;      // 主绿色（成功）
+@warning-color: #4EC9A8;      // 浅绿色（警告/提示）
+@danger-color: #1A7A5E;       // 深绿色（危险/关闭）
+@info-color: #4EC9A8;         // 中绿色（信息）
+@accent-color: #2D9F7A;       // 主绿色（强调）
 
 // ============ 背景色 ============
-@bg-page: #F5F5F5;            // 页面背景
+@bg-page: #F7F7F7;            // 更温暖的页面背景
 @bg-card: #FFFFFF;            // 卡片背景
-@bg-gradient-start: #7FDDB8;  // 渐变起始色
-@bg-gradient-end: #5EC9A8;    // 渐变结束色
-@bg-mask: rgba(0, 0, 0, 0.5); // 蒙层
+@bg-gradient-start: #E8F8F4;  // 优化的渐变起始色
+@bg-gradient-end: #D4F0E8;    // 优化的渐变结束色
+@bg-mask: rgba(0, 0, 0, 0.4); // 更柔和的蒙层
 
 // ============ 文字颜色 ============
-@text-primary: #333333;       // 主要文字
-@text-secondary: #666666;     // 次要文字
-@text-hint: #999999;          // 提示文字
+@text-primary: #1A1A1A;       // 更柔和的黑色
+@text-secondary: #636366;     // iOS 风格的次要文字
+@text-hint: #8E8E93;          // iOS 风格的提示文字
 @text-white: #FFFFFF;         // 白色文字
-@text-disabled: #CCCCCC;      // 禁用文字
+@text-disabled: #C7C7CC;      // iOS 风格的禁用文字
 
 // ============ 边框和分割线 ============
-@border-light: #F0F0F0;       // 浅色边框
-@border-main: #E0E0E0;        // 常规边框
-@border-dark: #CCCCCC;        // 深色边框
+@border-light: #F2F2F7;       // iOS 风格的浅色边框
+@border-main: #E5E5EA;        // iOS 风格的常规边框
+@border-dark: #C7C7CC;        // iOS 风格的深色边框
 
 // ============ 阴影 ============
-@shadow-light: 0 2rpx 8rpx rgba(0, 0, 0, 0.08);
-@shadow-main: 0 4rpx 16rpx rgba(0, 0, 0, 0.12);
-@shadow-heavy: 0 8rpx 24rpx rgba(0, 0, 0, 0.16);
+@shadow-light: 0 1rpx 3rpx rgba(0, 0, 0, 0.06), 0 1rpx 2rpx rgba(0, 0, 0, 0.04);
+@shadow-main: 0 2rpx 8rpx rgba(0, 0, 0, 0.08), 0 1rpx 4rpx rgba(0, 0, 0, 0.06);
+@shadow-heavy: 0 4rpx 16rpx rgba(0, 0, 0, 0.12), 0 2rpx 8rpx rgba(0, 0, 0, 0.08);
 
 // ============ 圆角 ============
 @radius-small: 4rpx;
@@ -62,7 +62,7 @@
 
 // ============ 渐变 Mixin ============
 .gradient-primary {
-  background: linear-gradient(135deg, @bg-gradient-start 0%, @bg-gradient-end 100%);
+  background: linear-gradient(135deg, @primary-light 0%, @primary-main 100%);
 }
 
 .gradient-page-bg {
@@ -70,5 +70,20 @@
 }
 
 .gradient-card-bg {
-  background: linear-gradient(135deg, @secondary-white 0%, #FAFAFA 100%);
+  background: linear-gradient(135deg, @secondary-white 0%, @primary-lighter 100%);
+}
+
+// 主按钮渐变
+.gradient-button-primary {
+  background: linear-gradient(135deg, @primary-main 0%, @primary-dark 100%);
+}
+
+// 成功按钮渐变
+.gradient-button-success {
+  background: linear-gradient(135deg, @success-color 0%, @primary-dark 100%);
+}
+
+// 强调按钮渐变
+.gradient-button-accent {
+  background: linear-gradient(135deg, @accent-color 0%, @primary-dark 100%);
 }

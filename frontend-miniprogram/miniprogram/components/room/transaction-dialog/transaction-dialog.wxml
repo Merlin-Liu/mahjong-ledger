@@ -1,10 +1,10 @@
 <!--transaction-dialog.wxml-->
 <t-dialog
   visible="{{visible}}"
-  title="向 {{targetMember.username}} 转账"
+  title="向 {{targetMember.username}} 转分"
   bind:confirm="onConfirm"
   bind:cancel="onCancel"
-  confirm-btn="确认转账"
+  confirm-btn="确认转分"
   cancel-btn="取消"
   async-close="{{true}}"
 >
@@ -15,13 +15,13 @@
     </view>
     <view class="transaction-form">
       <view class="transaction-form-item">
-        <text class="transaction-label">转账金额（分）</text>
+        <text class="transaction-label">转分金额（分）</text>
         <input
           id="amount-input"
           class="transaction-input"
           type="digit"
           value="{{transactionAmount}}"
-          placeholder="请输入转账金额"
+          placeholder="请输入转分金额"
           bind:input="onAmountInput"
           bind:confirm="onConfirm"
           confirm-type="done"

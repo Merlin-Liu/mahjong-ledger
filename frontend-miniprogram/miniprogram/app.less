@@ -1,5 +1,6 @@
 /**app.wxss**/
 /* tdesign-miniprogram 组件会自动引入各自的样式，无需全局引入 */
+@import './config/theme.less';
 
 .container {
   height: 100%;
@@ -9,4 +10,18 @@
   justify-content: space-between;
   padding: 200rpx 0;
   box-sizing: border-box;
+}
+
+/* 覆盖 t-dialog 确认按钮颜色 */
+.t-dialog__confirm,
+.t-dialog__btn--confirm,
+.t-dialog__footer .t-dialog__confirm,
+.t-dialog__footer .t-dialog__btn--confirm {
+  color: @primary-main !important;
+}
+
+/* 更通用的选择器，覆盖所有可能的确认按钮类名 */
+.t-dialog button[class*="confirm"],
+.t-dialog [class*="confirm"] {
+  color: @primary-main !important;
 } 

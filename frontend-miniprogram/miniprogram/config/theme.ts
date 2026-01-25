@@ -86,68 +86,69 @@ export interface ThemeConfig {
 
 /**
  * 默认主题配置
+ * 优化后的现代配色方案
  */
 export const theme: ThemeConfig = {
-  // 主色系 - 基于 Logo 和分享卡片的绿色
+  // 主色系 - 优化的绿色系，更柔和现代
   primary: {
-    main: '#1A7A5E',       // 深绿色（Logo 背景色）
-    light: '#5EC9A8',      // 中绿色
-    lighter: '#7FDDB8',    // 浅绿色（分享卡片背景）
-    dark: '#0E6647',       // 更深的绿色
+    main: '#2D9F7A',       // 主绿色（更亮更现代）
+    light: '#4EC9A8',      // 中绿色（更柔和）
+    lighter: '#E8F8F4',    // 极浅绿色（背景用）
+    dark: '#1A7A5E',       // 深绿色（保持品牌色）
   },
   
-  // 辅助色系
+  // 辅助色系 - 优化的灰色系
   secondary: {
     white: '#FFFFFF',
-    black: '#000000',
+    black: '#1A1A1A',      // 更柔和的黑色
     gray: {
-      light: '#CCCCCC',
-      main: '#999999',
-      dark: '#666666',
+      light: '#E5E5E5',    // 更柔和的浅灰
+      main: '#8E8E93',     // iOS 风格的中灰
+      dark: '#636366',     // 更柔和的深灰
     },
   },
   
-  // 功能色
+  // 功能色 - 统一使用绿色系
   functional: {
-    success: '#0E9B68',    // 成功色（对勾的绿色）
-    warning: '#FF9800',    // 警告色
-    danger: '#F44336',     // 危险色
-    info: '#2196F3',       // 信息色
-    accent: '#D32F2F',     // 强调色（麻将"中"字红色）
+    success: '#2D9F7A',    // 主绿色（成功）
+    warning: '#4EC9A8',    // 浅绿色（警告/提示）
+    danger: '#1A7A5E',     // 深绿色（危险/关闭）
+    info: '#4EC9A8',       // 中绿色（信息）
+    accent: '#2D9F7A',     // 主绿色（强调）
   },
   
-  // 背景色
+  // 背景色 - 更温暖的背景
   background: {
-    page: '#F5F5F5',       // 页面背景
+    page: '#F7F7F7',       // 更温暖的页面背景
     card: '#FFFFFF',       // 卡片背景
-    gradient: {            // 渐变背景（分享卡片的渐变）
-      start: '#7FDDB8',
-      end: '#5EC9A8',
+    gradient: {            // 优化的渐变背景
+      start: '#E8F8F4',
+      end: '#D4F0E8',
     },
-    mask: 'rgba(0, 0, 0, 0.5)', // 半透明蒙层
+    mask: 'rgba(0, 0, 0, 0.4)', // 更柔和的蒙层
   },
   
-  // 文字颜色
+  // 文字颜色 - 更好的对比度
   text: {
-    primary: '#333333',    // 主要文字
-    secondary: '#666666',  // 次要文字
-    hint: '#999999',       // 提示文字
+    primary: '#1A1A1A',    // 更柔和的黑色
+    secondary: '#636366',   // iOS 风格的次要文字
+    hint: '#8E8E93',       // iOS 风格的提示文字
     white: '#FFFFFF',      // 白色文字
-    disabled: '#CCCCCC',   // 禁用文字
+    disabled: '#C7C7CC',    // iOS 风格的禁用文字
   },
   
-  // 边框和分割线
+  // 边框和分割线 - 更柔和的边框
   border: {
-    light: '#F0F0F0',      // 浅色边框
-    main: '#E0E0E0',       // 常规边框
-    dark: '#CCCCCC',       // 深色边框
+    light: '#F2F2F7',      // iOS 风格的浅色边框
+    main: '#E5E5EA',       // iOS 风格的常规边框
+    dark: '#C7C7CC',       // iOS 风格的深色边框
   },
   
-  // 阴影
+  // 阴影 - 更自然的阴影
   shadow: {
-    light: '0 2rpx 8rpx rgba(0, 0, 0, 0.08)',
-    main: '0 4rpx 16rpx rgba(0, 0, 0, 0.12)',
-    heavy: '0 8rpx 24rpx rgba(0, 0, 0, 0.16)',
+    light: '0 1rpx 3rpx rgba(0, 0, 0, 0.06), 0 1rpx 2rpx rgba(0, 0, 0, 0.04)',
+    main: '0 2rpx 8rpx rgba(0, 0, 0, 0.08), 0 1rpx 4rpx rgba(0, 0, 0, 0.06)',
+    heavy: '0 4rpx 16rpx rgba(0, 0, 0, 0.12), 0 2rpx 8rpx rgba(0, 0, 0, 0.08)',
   },
   
   // 圆角

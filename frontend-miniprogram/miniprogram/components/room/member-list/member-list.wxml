@@ -24,7 +24,7 @@
       </view>
     </view>
   </scroll-view>
-  <view class="member-tip">点击头像向对方转账</view>
+  <view class="member-tip">点击头像向对方转分</view>
 </view>
 
 <!-- 二维码弹窗 -->

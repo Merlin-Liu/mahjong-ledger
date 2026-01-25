@@ -1,4 +1,6 @@
 /**transaction-dialog.less**/
+@import '../../../config/theme.less';
+
 /* 转账对话框样式 */
 .transaction-dialog-content {
   padding: 20rpx 0;
@@ -16,15 +18,15 @@
 .transaction-target-avatar {
   width: 100rpx;
   height: 100rpx;
-  border-radius: 50%;
+  border-radius: @radius-round;
   margin-bottom: 15rpx;
-  background-color: #e0e0e0;
+  background-color: @border-main;
 }
 
 .transaction-target-name {
   font-size: 32rpx;
   font-weight: 600;
-  color: #333;
+  color: @text-primary;
 }
 
 .transaction-form {
@@ -41,15 +43,15 @@
 
 .transaction-label {
   font-size: 28rpx;
-  color: #666;
+  color: @text-secondary;
   font-weight: 500;
 }
 
 .transaction-input {
   padding: 20rpx;
-  background-color: #f5f5f5;
-  border-radius: 10rpx;
+  background-color: @bg-page;
+  border-radius: @radius-medium;
   font-size: 32rpx;
-  color: #333;
+  color: @text-primary;
 }
 

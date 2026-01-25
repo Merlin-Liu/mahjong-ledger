@@ -12,29 +12,37 @@
         data-code="{{item.room.code}}"
         bindtap="onRoomTap"
       >
-        <view class="room-header">
-          <view class="room-info">
-            <text class="room-code">房间号: {{item.room.code}}</text>
-            <view class="room-status-wrapper">
+        <view class="room-item-content">
+          <view class="room-item-left">
+            <view class="room-item-info">
+              <text class="room-item-owner-label">房主: </text>
+              <text class="room-item-owner-name">{{item.room.owner.username}}</text>
+            </view>
+            <view class="room-item-bottom">
+              <text class="room-item-member-info">{{item.memberInfo}}</text>
               <view class="room-status {{item.room.status === 'active' ? 'status-active' : 'status-closed'}}">
                 {{item.room.status === 'active' ? '开启中' : '关闭'}}
               </view>
-              <view class="room-owner-badge" wx:if="{{item.isOwner}}">我的</view>
+              <view class="room-item-owner-badge" wx:if="{{item.isOwner}}">我的</view>
             </view>
           </view>
-        </view>
-        
-        <view class="room-footer">
-          <text class="room-time">{{item.formattedCreatedAt}}</text>
-          <text class="room-owner">房主: {{item.room.owner.username}}</text>
+          <view class="room-item-right">
+            <text class="room-item-code">
+              <text class="room-item-code-label">房间号: </text>
+              <text class="room-item-code-value">{{item.room.code}}</text>
+            </text>
+            <text class="room-item-time">{{item.formattedCreatedAt}}</text>
+          </view>
         </view>
       </view>
     </view>
 
     <!-- 空状态 -->
     <view class="empty-state" wx:else>
-      <text class="empty-icon">🏠</text>
-      <text class="empty-text">暂无房间记录</text>
+      <view class="empty-icon-wrapper">
+        <text class="empty-icon">🀄</text>
+      </view>
+      <text class="empty-text">还没有房间记录</text>
       <text class="empty-desc">近3个月内创建或加入的房间将显示在这里</text>
     </view>
   </view>

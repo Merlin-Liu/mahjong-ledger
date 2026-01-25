@@ -172,6 +172,12 @@ export const userApi = {
         joinedAt: string
         leftAt: string | null
       }
+      members: Array<{
+        userId: number
+        username: string
+        joinedAt: string
+        leftAt: string | null
+      }>
     }>>(`/api/users/${userId}/rooms?months=${months}`)
   },
 

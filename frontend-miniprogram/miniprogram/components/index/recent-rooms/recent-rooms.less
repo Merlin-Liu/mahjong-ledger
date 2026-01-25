@@ -1,62 +1,137 @@
 /**recent-rooms.less**/
+@import '../../../config/theme.less';
+
 /* 统一的功能卡片样式 */
 .action-card {
-  background: #ffffff;
-  border-radius: 16rpx;
+  background: linear-gradient(135deg, #FFFFFF 0%, #FAFDFC 50%, #F8FDFB 100%);
+  border-radius: @radius-large;
   padding: 20rpx 24rpx;
-  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.06);
-  border: 1rpx solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4rpx 12rpx rgba(45, 159, 122, 0.1), 0 2rpx 6rpx rgba(45, 159, 122, 0.06);
+  border: 2rpx solid rgba(78, 201, 168, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.action-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4rpx;
+  background: linear-gradient(90deg, @primary-light 0%, @primary-main 50%, @primary-light 100%);
+  opacity: 0.6;
 }
 
 .card-header {
   margin-bottom: 16rpx;
+  position: relative;
+  z-index: 1;
 }
 
 .card-title {
   font-size: 28rpx;
   font-weight: 600;
-  color: #333;
+  background: linear-gradient(135deg, @text-primary 0%, @primary-dark 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
   letter-spacing: 0.5rpx;
+  position: relative;
+  display: inline-block;
+}
+
+.card-title::after {
+  content: '';
+  position: absolute;
+  bottom: -4rpx;
+  left: 0;
+  width: 40rpx;
+  height: 3rpx;
+  background: linear-gradient(90deg, @primary-main 0%, transparent 100%);
+  border-radius: 2rpx;
 }
 
 /* 最近的房间列表 */
 .recent-rooms {
   display: flex;
   flex-direction: column;
-  gap: 8rpx;
+  gap: 12rpx;
   margin-bottom: 12rpx;
 }
 
 .recent-room-item {
-  padding: 12rpx 16rpx;
-  background: #f8f9fa;
-  border-radius: 8rpx;
-  border: 1rpx solid rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
+  padding: 16rpx 18rpx;
+  background: linear-gradient(135deg, #FFFFFF 0%, #F8FDFB 100%);
+  border-radius: @radius-medium;
+  border: 2rpx solid rgba(78, 201, 168, 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04), 0 1rpx 4rpx rgba(45, 159, 122, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.recent-room-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4rpx;
+  height: 100%;
+  background: linear-gradient(180deg, @primary-light 0%, @primary-main 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .recent-room-item:active {
-  transform: scale(0.98);
-  background: #e9ecef;
+  transform: translateX(4rpx) scale(0.99);
+  background: linear-gradient(135deg, #F0F9F6 0%, #E8F8F4 100%);
+  border-color: @primary-main;
+  box-shadow: 0 4rpx 12rpx rgba(45, 159, 122, 0.15), 0 2rpx 6rpx rgba(45, 159, 122, 0.1);
 }
 
-.room-item-header {
+.recent-room-item:active::before {
+  opacity: 1;
+}
+
+.room-item-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 6rpx;
   gap: 12rpx;
+}
+
+.room-item-left {
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+  flex: 1;
+  min-width: 0;
+}
+
+.room-item-bottom {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
 }
 
 .room-item-code {
   font-size: 22rpx;
   font-weight: 600;
-  color: #333;
-  flex: 1;
-  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  letter-spacing: 0.5rpx;
+}
+
+.room-item-code-label {
+  color: @text-primary;
+}
+
+.room-item-code-value {
+  font-size: 22rpx;
+  font-weight: 600;
+  color: @primary-main;
 }
 
 .room-item-badges {
@@ -81,62 +156,198 @@
 }
 
 .room-item-status.status-active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: #fff;
+  background: linear-gradient(135deg, #3DB892 0%, @primary-main 50%, @primary-dark 100%);
+  color: @text-white;
+  box-shadow: 0 2rpx 6rpx rgba(45, 159, 122, 0.25), 0 1rpx 3rpx rgba(45, 159, 122, 0.15);
+  border: 1rpx solid rgba(255, 255, 255, 0.2);
 }
 
 .room-item-status.status-closed {
-  background: #e9ecef;
-  color: #6c757d;
+  background: @border-main;
+  color: @text-secondary;
 }
 
 .room-item-owner-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 2rpx 6rpx;
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  color: #fff;
-  border-radius: 4rpx;
+  padding: 2rpx 8rpx;
+  background: linear-gradient(135deg, #FF6B6B 0%, #FF5252 100%);
+  color: @text-white;
+  border-radius: @radius-small;
   font-size: 16rpx;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 1.2;
   white-space: nowrap;
   height: 32rpx;
   box-sizing: border-box;
+  box-shadow: 0 2rpx 6rpx rgba(255, 107, 107, 0.3), 0 1rpx 3rpx rgba(255, 82, 82, 0.2);
+  border: 1rpx solid rgba(255, 255, 255, 0.3);
+  animation: badgePulse 2s ease-in-out infinite;
 }
 
-.room-item-footer {
+@keyframes badgePulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 2rpx 6rpx rgba(255, 107, 107, 0.3), 0 1rpx 3rpx rgba(255, 82, 82, 0.2);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 3rpx 8rpx rgba(255, 107, 107, 0.4), 0 2rpx 4rpx rgba(255, 82, 82, 0.3);
+  }
+}
+
+.room-item-right {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 20rpx;
-  color: #666;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6rpx;
+  flex-shrink: 0;
 }
 
 .room-item-time {
+  font-size: 20rpx;
   font-weight: 500;
+  color: @text-secondary;
+  opacity: 0.8;
+  letter-spacing: 0.2rpx;
 }
 
-.room-item-owner {
-  opacity: 0.8;
+.room-item-info {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+}
+
+.room-item-owner-label {
+  font-size: 20rpx;
+  font-weight: 600;
+  color: @text-primary;
+}
+
+.room-item-owner-name {
+  font-size: 20rpx;
+  font-weight: 600;
+  background: linear-gradient(135deg, @primary-main 0%, @primary-dark 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 0.3rpx;
+}
+
+.room-item-member-info {
+  font-size: 20rpx;
+  font-weight: 600;
+  color: @primary-main;
+  padding: 4rpx 10rpx;
+  background: linear-gradient(135deg, rgba(78, 201, 168, 0.15) 0%, rgba(45, 159, 122, 0.12) 100%);
+  border-radius: @radius-small;
+  border: 1rpx solid rgba(78, 201, 168, 0.25);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  box-shadow: 0 1rpx 3rpx rgba(45, 159, 122, 0.1);
 }
 
 /* 空状态 */
 .recent-rooms-empty {
-  padding: 24rpx 0;
+  padding: 60rpx 20rpx;
   text-align: center;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
-.recent-rooms-empty .empty-text {
+.empty-icon-wrapper {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(78, 201, 168, 0.1) 0%, rgba(45, 159, 122, 0.08) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24rpx;
+  position: relative;
+  animation: emptyIconFloat 3s ease-in-out infinite;
+}
+
+.empty-icon-wrapper::before {
+  content: '';
+  position: absolute;
+  top: -2rpx;
+  left: -2rpx;
+  right: -2rpx;
+  bottom: -2rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(78, 201, 168, 0.3) 0%, rgba(45, 159, 122, 0.2) 100%);
+  z-index: -1;
+  opacity: 0.5;
+  animation: emptyIconGlow 2s ease-in-out infinite;
+}
+
+@keyframes emptyIconFloat {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-8rpx) scale(1.05);
+  }
+}
+
+@keyframes emptyIconGlow {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.1);
+  }
+}
+
+.empty-icon {
+  font-size: 64rpx;
+  line-height: 1;
+  display: block;
+  animation: emptyIconRotate 4s ease-in-out infinite;
+}
+
+@keyframes emptyIconRotate {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-5deg);
+  }
+  75% {
+    transform: rotate(5deg);
+  }
+}
+
+.empty-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: @text-primary;
+  margin-bottom: 12rpx;
+  letter-spacing: 0.5rpx;
+}
+
+.empty-tip {
   font-size: 24rpx;
-  color: #999;
+  color: @text-secondary;
+  line-height: 1.6;
+  letter-spacing: 0.3rpx;
+  opacity: 0.9;
 }
 
 /* 查看更多按钮 */
 .view-more-wrapper {
   margin-top: 12rpx;
-  padding-top: 0;
+  padding-top: 12rpx;
+  border-top: 1rpx solid rgba(78, 201, 168, 0.15);
 }
 
 .btn-view-more {
@@ -144,13 +355,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 10rpx 0;
+  padding: 12rpx 0;
   background: transparent;
   border: none;
   font-size: 24rpx;
-  color: #667eea;
-  font-weight: 500;
-  transition: all 0.3s ease;
+  color: @primary-main;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
 }
 
 .btn-view-more::after {
@@ -159,10 +371,17 @@
 
 .btn-view-more:active {
   opacity: 0.7;
+  color: @primary-dark;
 }
 
 .btn-view-more-arrow {
-  margin-left: 6rpx;
-  font-size: 20rpx;
+  margin-left: 8rpx;
+  font-size: 22rpx;
+  transition: transform 0.3s ease;
+  display: inline-block;
+}
+
+.btn-view-more:active .btn-view-more-arrow {
+  transform: translateX(4rpx);
 }
 
