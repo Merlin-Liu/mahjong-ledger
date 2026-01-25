@@ -9,7 +9,6 @@ page {
 }
 
 .scrollarea {
-  // flex: 1;
   overflow-y: hidden;
 }
 
@@ -19,22 +18,20 @@ page {
   min-height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 16rpx;
+  gap: 20rpx;
   box-sizing: border-box;
 }
 
 /* Flex 布局容器 */
 .grid-container {
   display: flex;
-  flex-wrap: wrap;
-  gap: 20rpx;
   width: 100%;
-  box-sizing: border-box;
+  gap: 20rpx;
 }
 
 /* Flex 卡片基础样式 - 统一大小（使用固定高度，参考原按钮尺寸） */
 .grid-card {
-  flex: 0 0 calc(50% - 10rpx);
+  flex: 1;
   height: 170rpx;
   min-height: 170rpx;
   position: relative;
@@ -53,7 +50,6 @@ page {
   background: linear-gradient(135deg, #FFFFFF 0%, #F8FDFB 50%, #E8F8F4 100%);
   box-shadow: 0 4rpx 12rpx rgba(45, 159, 122, 0.12), 0 2rpx 6rpx rgba(45, 159, 122, 0.08);
   border: 2rpx solid rgba(78, 201, 168, 0.2);
-  padding: 16rpx 12rpx;
   position: relative;
   box-sizing: border-box;
   overflow: visible;

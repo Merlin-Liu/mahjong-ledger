@@ -1,5 +1,5 @@
 <!--index.wxml-->
-<navigation-bar title="打牌记账" back="{{false}}" color="black" background="#FFF"></navigation-bar>
+<navigation-bar title="打牌记账" back="{{false}}" color="black" background="transparent"></navigation-bar>
 
 <scroll-view class="scrollarea" scroll-y type="list">
   <view class="container">
@@ -17,6 +17,9 @@
           <text class="btn-text">邀请好友一起玩</text>
         </view>
       </button>
+    </view>
+
+    <view class="grid-container">
       <!-- 左下：开房间 -->
       <button class="grid-card btn-action btn-primary" bindtap="createRoom" disabled="{{loading}}">
         <view class="btn-content">
