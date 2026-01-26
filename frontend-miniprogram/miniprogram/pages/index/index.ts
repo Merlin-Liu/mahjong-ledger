@@ -182,7 +182,7 @@ Page({
           const timeB = new Date(b.membership.joinedAt).getTime()
           return timeB - timeA
         })
-        .slice(0, 4) // 只取前4个
+        .slice(0, 3) // 只取前3个
         .map((item) => {
           const isOwner = item.room.owner.id === userId
           const createdAt = new Date(item.room.createdAt)
@@ -237,19 +237,18 @@ Page({
   // 格式化日期
   formatDate(date: Date): string {
     const now = new Date()
-    const diff = now.getTime() - date.getTime()
+    
+    // 获取今天的日期（年月日，时间设为0点）
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+    // 获取目标日期的日期（年月日，时间设为0点）
+    const targetDate = new Date(date.getFullYear(), date.getMonth(), date.getDate())
+    
+    // 计算日期差（天数）
+    const diffTime = today.getTime() - targetDate.getTime()
+    const days = Math.floor(diffTime / (1000 * 60 * 60 * 24))
     
     // 处理负数情况（未来时间，可能是时区问题导致的）
     // 如果时间差小于0，说明是未来时间，统一显示为"今天"
-    if (diff < 0) {
-      const hours = date.getHours().toString().padStart(2, '0')
-      const minutes = date.getMinutes().toString().padStart(2, '0')
-      return `今天 ${hours}:${minutes}`
-    }
-    
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24))
-    
-    // 再次检查，防止负数
     if (days < 0) {
       const hours = date.getHours().toString().padStart(2, '0')
       const minutes = date.getMinutes().toString().padStart(2, '0')
@@ -265,14 +264,18 @@ Page({
       return `今天 ${timeStr}`
     } else if (days === 1) {
       return `昨天 ${timeStr}`
-    } else if (days < 7) {
-      return `${days}天前`
-    } else if (days < 30) {
-      const weeks = Math.floor(days / 7)
-      return `${weeks}周前`
     } else {
-      const months = Math.floor(days / 30)
-      return `${months}个月前`
+      // 其他日期：显示月-日 或 年-月-日（跨年时）
+      const year = date.getFullYear()
+      const month = (date.getMonth() + 1).toString().padStart(2, '0')
+      const day = date.getDate().toString().padStart(2, '0')
+      
+      // 如果是今年，只显示月-日；如果是跨年，显示年-月-日
+      if (year === now.getFullYear()) {
+        return `${month}-${day} ${timeStr}`
+      } else {
+        return `${year}-${month}-${day} ${timeStr}`
+      }
     }
   },
 
